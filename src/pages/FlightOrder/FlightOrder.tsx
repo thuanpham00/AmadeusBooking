@@ -25,11 +25,15 @@ import { flightApi } from "src/apis/flight.api"
 import { toast } from "react-toastify"
 
 export default function FlightOrder() {
-  // xử lý header
   const navigate = useNavigate()
   const [showHeader, setShowHeader] = useState(false)
   const [scrollWindow, setScrollWindow] = useState(0)
+  // xử lý form
+  const [currentAdult, setCurrentAdult] = useState<number>(0)
+  const [currentChild, setCurrentChild] = useState<number>(0)
+  const [currentInfant, setCurrentInfant] = useState<number>(0)
 
+  // xử lý header
   const handleScrollWindow = () => {
     const currentScrollY = window.scrollY
     setScrollWindow(currentScrollY)
@@ -58,10 +62,6 @@ export default function FlightOrder() {
   const dataLS = localStorage.getItem("flightPriceData") as string
   const data = JSON.parse(dataLS) as ResponseFlightPrice
 
-  // xử lý form
-  const [currentAdult, setCurrentAdult] = useState<number>(0)
-  const [currentChild, setCurrentChild] = useState<number>(0)
-  const [currentInfant, setCurrentInfant] = useState<number>(0)
   // const [currentInfant, setCurrentInfant] = useState<number>(0)
 
   const quantityOfTraveller = useMemo(() => {
@@ -140,9 +140,6 @@ export default function FlightOrder() {
 
   // cái này hay
   const [checkState, setCheckState] = useState<boolean[]>(Array(currentAdult).fill(true)) // khởi tạo 1 mảng trạng thái toàn true
-  const [countAdult, setCountAdult] = useState(0)
-  const [countChild, setCountChild] = useState(0)
-  const [countInfant, setCountInfant] = useState(0)
 
   const handleCheckTraveller =
     (type: string, index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -171,17 +168,14 @@ export default function FlightOrder() {
     if (type === "adult") {
       if (currentAdult < quantityOfTraveller.adult) {
         setCurrentAdult((prev) => prev + 1)
-        setCountAdult((prev) => prev + 1)
       }
     } else if (type === "child") {
       if (currentChild < quantityOfTraveller.child) {
         setCurrentChild((prev) => prev + 1)
-        setCountChild((prev) => prev + 1)
       }
     } else if (type === "infant") {
       if (currentInfant < quantityOfTraveller.infant) {
         setCurrentInfant((prev) => prev + 1)
-        setCountInfant((prev) => prev + 1)
       }
     }
   }
@@ -195,8 +189,8 @@ export default function FlightOrder() {
 
   useEffect(() => {
     if (travellers) {
-      console.log(travellers)
       localStorage.setItem("travellerList", JSON.stringify(travellers))
+      console.log(travellers)
     }
   }, [travellers])
 
@@ -519,14 +513,7 @@ export default function FlightOrder() {
                   <h2 className="text-xl ml-1 text-textColor font-semibold">
                     Thông tin chi tiết của khách du lịch
                   </h2>
-                  <div className="mt-2 px-2 py-4 text-sm text-textColor bg-[#e3fff9] flex items-center gap-2">
-                    Giờ đây, nhiều khách du lịch có thể nhận được thông tin đặt phòng và các thông
-                    báo khác chỉ bằng cách thêm thông tin liên hệ của họ!
-                    <div className="text-sm text-whiteColor bg-green-500 px-3 py-1 rounded-full">
-                      NEW
-                    </div>
-                  </div>
-                  <div className="mt-4 p-2 bg-[#ffedd1] text-sm">
+                  <div className="mt-2 p-2 bg-[#ffedd1] text-sm">
                     <strong>Xin hãy cẩn thận:</strong> Thông tin hành khách phải trùng khớp với hộ
                     chiếu hoặc giấy tờ tùy thân có ảnh của quý khách
                   </div>
@@ -543,7 +530,7 @@ export default function FlightOrder() {
                           </span>
                           {currentAdult === quantityOfTraveller.adult && (
                             <div className="text-xs text-red-500">
-                              Bạn đã chọn {countAdult} vé cho{" "}
+                              Bạn đã chọn {currentAdult} vé cho{" "}
                               {changeLanguageTraveller(
                                 data.data.flightOffers[0].travelerPricings[0].travelerType
                               )}
@@ -552,7 +539,9 @@ export default function FlightOrder() {
                           )}
                         </div>
                         <div>
-                          <span className="text-base text-textColor font-medium">{countAdult}</span>
+                          <span className="text-base text-textColor font-medium">
+                            {currentAdult}
+                          </span>
                           <span className="text-base text-textColor font-medium">
                             /{quantityOfTraveller.adult}
                           </span>
@@ -631,7 +620,7 @@ export default function FlightOrder() {
                           </span>
                           {currentChild === quantityOfTraveller.child && (
                             <div className="text-xs text-red-500">
-                              Bạn đã chọn {countChild} vé cho{" "}
+                              Bạn đã chọn {currentChild} vé cho{" "}
                               {changeLanguageTraveller(
                                 data.data.flightOffers[0].travelerPricings[0].travelerType
                               )}
@@ -640,7 +629,9 @@ export default function FlightOrder() {
                           )}
                         </div>
                         <div>
-                          <span className="text-base text-textColor font-medium">{countChild}</span>
+                          <span className="text-base text-textColor font-medium">
+                            {currentChild}
+                          </span>
                           <span className="text-base text-textColor font-medium">
                             /{quantityOfTraveller.child}
                           </span>
@@ -719,7 +710,7 @@ export default function FlightOrder() {
                           </span>
                           {currentInfant === quantityOfTraveller.infant && (
                             <div className="text-xs text-red-500">
-                              Bạn đã chọn {countInfant} vé cho{" "}
+                              Bạn đã chọn {currentInfant} vé cho{" "}
                               {changeLanguageTraveller(
                                 data.data.flightOffers[0].travelerPricings[0].travelerType
                               )}
@@ -729,7 +720,7 @@ export default function FlightOrder() {
                         </div>
                         <div>
                           <span className="text-base text-textColor font-medium">
-                            {countInfant}
+                            {currentInfant}
                           </span>
                           <span className="text-base text-textColor font-medium">
                             /{quantityOfTraveller.infant}

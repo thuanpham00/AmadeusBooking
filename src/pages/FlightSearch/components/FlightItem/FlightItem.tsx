@@ -71,8 +71,9 @@ export default function FlightItem({ item, list }: Props) {
       }
     })
   }
+
   const flightPrice = flightOffersPriceMutation.data?.data as ResponseFlightPrice
-  // console.log(flightPrice)
+
   const handleNavigatePage = () => {
     navigate({
       pathname: path.flightOrder
@@ -454,7 +455,7 @@ export default function FlightItem({ item, list }: Props) {
                   {!showPriceDetail && (
                     <div className="h-[100px]">
                       <Skeleton
-                        className="absolute left-1/2 top-[75%] -translate-x-1/2 -translate-y-1/2"
+                        className="flex flex-col items-center justify-center  absolute left-1/2 top-[75%] -translate-x-1/2 -translate-y-1/2"
                         classNameLoader="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
                       />
                     </div>
