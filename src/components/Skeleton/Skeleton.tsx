@@ -5,7 +5,7 @@ type Props = {
 
 export default function Skeleton({
   className = "absolute left-1/2 top-[30%] -translate-x-1/2 -translate-y-1/2",
-  classNameLoader = "w-16 h-16 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+  classNameLoader = "w-10 h-10 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
 }: Props) {
   return (
     <div role="status" className={className}>

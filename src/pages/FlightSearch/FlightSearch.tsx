@@ -33,6 +33,7 @@ import banner from "src/img/Flight/ticker-banner-flight.webp"
 import banner2 from "src/img/Flight/air-ticket-booking.webp"
 import banner3 from "src/img/Flight/travel-design-template.webp"
 import backGround from "src/img/FlightOrder/banner.webp"
+import useScrollHeader from "src/hooks/useScrollHeader"
 
 const fetchDataAirport = () => Promise.resolve(airportCodes) // khởi tạo 1 promise
 
@@ -64,29 +65,7 @@ export type FormData = Pick<
 
 export default function FlightSearch() {
   // xử lý header
-  const [showHeader, setShowHeader] = useState(false)
-  const [scrollWindow, setScrollWindow] = useState(0)
-
-  const handleScrollWindow = () => {
-    const currentScrollY = window.scrollY
-    setScrollWindow(currentScrollY)
-  }
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScrollWindow)
-
-    return () => window.removeEventListener("scroll", handleScrollWindow)
-  }, [])
-
-  // nếu scrollWindow có thay đổi thì nó tham chiếu tới chạy lại hàm này
-  useEffect(() => {
-    if (scrollWindow > 200) {
-      setShowHeader(true)
-    } else {
-      setShowHeader(false)
-    }
-  }, [scrollWindow])
-
+  const { showHeader } = useScrollHeader(200)
   // xử lý form
   const navigate = useNavigate()
   const queryConfig = useQueryConfig()

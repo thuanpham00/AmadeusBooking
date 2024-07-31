@@ -44,7 +44,6 @@ const schema = yup
       .required("Bắt buộc")
       .min(10, "Độ dài từ 10-11 kí tự")
       .max(11, "Độ dài từ 10-11 kí tự"),
-    dateBirth: yup.string(),
     dayBirth: yup
       .string()
       .required("Bắt buộc")
@@ -59,7 +58,10 @@ const schema = yup
       .string()
       .required("Bắt buộc")
       .min(4, "Năm tối thiểu là 4 kí tự")
-      .max(4, "Năm tối đa là 4 kí tự")
+      .max(4, "Năm tối đa là 4 kí tự"),
+
+    userName2: yup.string().required("Tên bắt buộc"),
+    lastName2: yup.string().required("Họ bắt buộc")
   })
   .required()
 

@@ -266,7 +266,7 @@ export default function Flight() {
     // khắc phục lệch layout
     <div className="h-[2650px] bg-[#fff]">
       {loading ? (
-        <Skeleton className="absolute left-1/2 top-[15%] -translate-x-1/2 -translate-y-1/2" />
+        <Skeleton className="flex flex-col justify-center items-center absolute left-1/2 top-[15%] -translate-x-1/2 -translate-y-1/2" />
       ) : (
         <Fragment>
           <Helmet>

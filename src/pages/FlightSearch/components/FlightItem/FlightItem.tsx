@@ -216,7 +216,7 @@ export default function FlightItem({ item, list }: Props) {
 
                   {showPriceDetail && (
                     <Fragment>
-                      <div className="px-6 flex items-start gap-2">
+                      <div className="px-6 py-2 flex items-start gap-2">
                         <div className="mt-[2px] text-base font-medium">
                           {flightPrice?.data.flightOffers[0].itineraries.length === 1
                             ? "One way"
@@ -273,7 +273,7 @@ export default function FlightItem({ item, list }: Props) {
                           )}
                         </div>
                       </div>
-                      <div className="px-6 grid grid-cols-3 gap-4 items-center h-[400px] overflow-y-auto">
+                      <div className="px-6 grid grid-cols-3 gap-4 items-center overflow-y-auto">
                         {flightPrice?.data.flightOffers[0].travelerPricings.map(
                           (traveler, index) => (
                             <div key={index} className="col-span-1 border-2 border-gray-300">

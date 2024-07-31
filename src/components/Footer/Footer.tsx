@@ -110,14 +110,6 @@ export default function Footer() {
                   Giữ liên lạc
                 </Link>
               </li>
-              <li className="mb-2">
-                <Link
-                  to="#"
-                  className="font-normal text-sm hover:underline duration-200 cursor-pointer text-whiteColor/80"
-                >
-                  Giữ liên lạc
-                </Link>
-              </li>
             </ul>
           </div>
 

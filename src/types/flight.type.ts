@@ -111,22 +111,23 @@ export type TravellerType = {
       }
     ]
   }
-  documents: [
-    //  Danh sách các tài liệu của hành khách
-    {
-      documentType: "PASSPORT" | "ID_CARD" // Loại giấy tờ tùy thân (hộ chiếu hoặc chứng minh thư).
-      birthPlace?: string // Nơi sinh của hành khách.
-      issuanceLocation?: string // Nơi cấp giấy tờ.
-      issuanceDate?: string // Ngày cấp giấy tờ.
-      number?: string // Số giấy tờ.
-      expiryDate?: string // Ngày hết hạn (tuỳ chọn).
-      issuanceCountry?: string // Quốc gia cấp (tuỳ chọn).
-      validityCountry?: string //  Quốc gia hiệu lực (tuỳ chọn).
-      nationality?: string // Quốc tịch (tuỳ chọn).
-      holder: boolean //  Xác định người giữ tài liệu.
-    }
-  ]
+  //  Danh sách các tài liệu của hành khách
+  documents: [DocumentType]
 }
+
+type DocumentType = {
+  //  Danh sách các tài liệu của hành khách
+  documentType: "PASSPORT" | "ID_CARD" // Loại giấy tờ tùy thân (hộ chiếu hoặc chứng minh thư).
+  birthPlace?: string // Nơi sinh của hành khách.
+  issuanceLocation?: string // Nơi cấp giấy tờ.
+  issuanceDate?: string // Ngày cấp giấy tờ.
+  number?: string // Số giấy tờ.
+  expiryDate?: string // Ngày hết hạn (tuỳ chọn).
+  issuanceCountry?: string // Quốc gia cấp (tuỳ chọn).
+  validityCountry?: string //  Quốc gia hiệu lực (tuỳ chọn).
+  nationality?: string // Quốc tịch (tuỳ chọn).
+  holder: boolean //  Xác định người giữ tài liệu.
+} //  Danh sách các tài liệu của hành khách
 
 export type FlightCreateOrder = {
   data: {

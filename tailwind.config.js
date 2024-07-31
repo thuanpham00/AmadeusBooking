@@ -26,7 +26,7 @@ module.exports = {
       addComponents({
         ".container": {
           // set up class container mới
-          maxWidth: "86rem", // 1376px
+          maxWidth: "80rem", // 1280px
           width: "100%",
           marginLeft: "auto",
           marginRight: "auto",
