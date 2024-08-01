@@ -90,6 +90,7 @@ export default function FormProfile({ addOnTraveller }: Props) {
   }
 
   const handleSubmitForm = handleSubmit((data) => {
+    console.log(data)
     const infoTraveller: TravellerType = {
       dateOfBirth: `${data.yearBirth}-${data.monthBirth}-${data.dayBirth}`,
       name: {
@@ -117,7 +118,7 @@ export default function FormProfile({ addOnTraveller }: Props) {
     toast.success("Lưu thông tin hành khách thành công")
   })
 
-  const handleRefreshForm = () => {
+  const handleResetForm = () => {
     reset()
     setNationalProfile("")
   }
@@ -128,13 +129,14 @@ export default function FormProfile({ addOnTraveller }: Props) {
       if (nameInput === "userName" || nameInput === "lastName") {
         setValue(nameInput, valueInput)
       } else if (
-        nameInput === "dayBirth" ||
         nameInput === "monthBirth" ||
-        nameInput === "yearBirth"
+        nameInput === "yearBirth" ||
+        nameInput === "monthBirth"
       ) {
         // Sử dụng regex để chỉ cho phép nhập số
         // thay thế các kí tự không phải kí tự số bằng ""
         const valueInput2 = valueInput.replace(/[^0-9]/g, "")
+        console.log(valueInput2)
         setValue(nameInput, valueInput2)
       }
     }
@@ -145,9 +147,8 @@ export default function FormProfile({ addOnTraveller }: Props) {
         <strong>Xin hãy cẩn thận:</strong> Thông tin hành khách phải trùng khớp với hộ chiếu hoặc
         giấy tờ tùy thân có ảnh của quý khách
       </span>
-      <span className="mt-4 text-lg font-medium text-center block">Thông tin hành khách</span>
-      <div className="grid grid-cols-6 items-center gap-x-8 gap-y-4 flex-wrap">
-        <div className="mb-2 col-span-6">
+      <div className="mt-2 grid grid-cols-6 items-center gap-x-8 gap-y-4 flex-wrap">
+        <div className="col-span-6">
           <span className="mb-[2px] text-sm block">Giới tính</span>
           <div className="flex items-start">
             <div
@@ -169,7 +170,7 @@ export default function FormProfile({ addOnTraveller }: Props) {
           </div>
         </div>
         <div className="col-span-3">
-          <span className="mb-[2px] text-sm block">Tên đệm và Tên (vd: MINH THUẬN)</span>
+          <span className="mb-[2px] text-sm block">Tên đệm và Tên (vd: MINH THUAN)</span>
           <Input
             className="flex flex-col items-start"
             classNameInput="w-full p-2 outline-none bg-transparent border font-normal focus:border-blueColor bg-white rounded border border-gray-400"
@@ -183,7 +184,7 @@ export default function FormProfile({ addOnTraveller }: Props) {
           />
         </div>
         <div className="col-span-3">
-          <span className="mb-[2px] text-sm block">Họ (vd: PHẠM)</span>
+          <span className="mb-[2px] text-sm block">Họ (vd: PHAM)</span>
           <Input
             className="flex flex-col items-start"
             classNameInput="w-full p-2 outline-none bg-transparent border font-normal focus:border-blueColor bg-white rounded border border-gray-400"
@@ -197,7 +198,7 @@ export default function FormProfile({ addOnTraveller }: Props) {
           />
         </div>
         <div className="col-span-3">
-          <span className="mb-[2px] text-sm block">Ngày sinh (ví dụ 2004/12/09)</span>
+          <span className="mb-[2px] text-sm block">Ngày sinh (YYYY/MM/dd)</span>
           <div className="flex items-center flex-wrap">
             <Input
               className="flex-1 flex flex-col items-start"
@@ -263,7 +264,7 @@ export default function FormProfile({ addOnTraveller }: Props) {
       <div className="flex items-center justify-end gap-2">
         <button
           className="text-sm text-gray-500 py-2 px-3 bg-transparent font-medium border border-gray-300 hover:underline rounded-sm hover:opacity-75"
-          onClick={handleRefreshForm}
+          onClick={handleResetForm}
           type="button"
         >
           Xóa

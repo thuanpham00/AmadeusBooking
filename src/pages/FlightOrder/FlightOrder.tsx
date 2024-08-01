@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { Helmet } from "react-helmet-async"
 import { countries, countryCodePhone } from "src/constant/flightSearch"
 import {
@@ -28,7 +28,7 @@ import Button from "src/components/Button"
 import { useMutation } from "@tanstack/react-query"
 import { flightApi } from "src/apis/flight.api"
 import { toast } from "react-toastify"
-import { FormProvider, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import schema, { schemaType } from "src/utils/rules"
 import Input from "src/components/Input"
@@ -40,15 +40,14 @@ export type FormData = Pick<
   schemaType,
   "codeNumber" | "numberPhone" | "email" | "userName2" | "lastName2"
 >
-
-export type InputName = Pick<schemaType, "codeNumber">
-
+export type InputName = "codeNumber"
 const schemaFormData = schema.pick(["codeNumber", "numberPhone", "email", "userName2", "lastName2"])
-
 const FetchDataListNational = () => Promise.resolve(countryCodePhone)
 
 export default function FlightOrder() {
   const navigate = useNavigate()
+  // xử lý header
+  const { showHeader } = useScrollHeader(200)
   // xử lý form
   const [currentAdult, setCurrentAdult] = useState<number>(0)
   const [currentChild, setCurrentChild] = useState<number>(0)
@@ -58,9 +57,6 @@ export default function FlightOrder() {
   const [codeNumberList, setCodeNumberList] = useState<CountryListCodeNumber>([])
   const [codeNumber, setCodeNumber] = useState("")
   const [showListCodeNumber, setShowListCodeNumber] = useState<boolean>(false)
-  // xử lý header
-
-  const { showHeader } = useScrollHeader(200)
 
   useEffect(() => {
     FetchDataListNational().then((res) => {
@@ -73,10 +69,6 @@ export default function FlightOrder() {
       codeNumberList.filter((item) => item.name.toLowerCase().includes(codeNumber.toLowerCase())),
     [codeNumberList, codeNumber]
   )
-
-  const handleFocusAirportList = () => {
-    setShowListCodeNumber(true)
-  }
 
   // xử lý back page
   const handleBackPage = () => {
@@ -210,26 +202,17 @@ export default function FlightOrder() {
     setTravellers((prev) => [...prev, newTravellers])
   }
 
-  useEffect(() => {
-    if (travellers) {
-      localStorage.setItem("travellerList", JSON.stringify(travellers))
-      console.log(travellers)
-    }
-  }, [travellers])
+  const handleItemClick = (inputName: InputName, value: string) => {
+    setValue(inputName, value as string)
+    setCodeNumber(value as string)
+    setShowListCodeNumber(false)
+  }
 
   const flightCreateOrderMutation = useMutation({
     mutationFn: (body: FlightCreateOrder) => {
       return flightApi.flightCreateOrder(body)
     }
   })
-
-  const handleItemClick = (inputName: string, value: string) => {
-    if (inputName === "national") {
-      setValue(inputName, value as string)
-    }
-    setCodeNumber(value as string)
-    setShowListCodeNumber(false)
-  }
 
   const {
     handleSubmit,
@@ -567,8 +550,8 @@ export default function FlightOrder() {
                 </div>
 
                 <div id="TravellerDetails" className="my-4">
-                  <h2 className="text-xl ml-1 text-textColor font-semibold">
-                    Thông tin chi tiết của khách du lịch
+                  <h2 className="text-lg text-textColor font-semibold my-2">
+                    Thông tin hành khách
                   </h2>
 
                   {data.data.flightOffers[0].travelerPricings.find(
@@ -841,100 +824,114 @@ export default function FlightOrder() {
                     </div>
                   )}
 
-                  <form onSubmit={onSubmit} className="bg-white p-4 shadow-xl">
-                    <span className="mt-4 text-lg font-medium text-center block">
-                      Thông tin liên lạc
-                    </span>
-                    <span className="text-sm block text-gray-500 mb-4">
-                      Ví Điện tử của quý khách sẽ được gửi đến đây
-                    </span>
-                    <div className="grid grid-cols-6 items-center gap-2 flex-wrap">
-                      <div className="col-span-6">
-                        <span className="mb-[2px] text-sm block">Tên</span>
-                        <Input
-                          className="flex flex-col items-start"
-                          classNameInput="w-full p-2 outline-none bg-transparent border font-normal focus:border-blueColor bg-white rounded border border-gray-400"
-                          type="text"
-                          autoComplete="off"
-                          placeholder="Tên"
-                          name="userName2"
-                          register={register}
-                          messageError={errors.userName2?.message}
-                        />
+                  <div>
+                    <h2 className="text-lg text-textColor font-semibold my-2">Thông tin liên hệ</h2>
+                    <form onSubmit={onSubmit} className="bg-white shadow-xl">
+                      <div className="py-3 border-b border-b-gray-300">
+                        <span className="px-4 text-base font-medium block">
+                          Thông tin liên hệ (nhận vé/phiếu thanh toán)
+                        </span>
+                        <span className="px-4 text-sm block text-gray-500">
+                          Vé Điện tử của quý khách sẽ được gửi đến đây
+                        </span>
                       </div>
-                      <div className="col-span-6">
-                        <span className="mb-[2px] text-sm block">Họ</span>
-                        <Input
-                          className="flex flex-col items-start"
-                          classNameInput="w-full p-2 outline-none bg-transparent border font-normal focus:border-blueColor bg-white rounded border border-gray-400"
-                          type="text"
-                          autoComplete="off"
-                          placeholder="Họ"
-                          name="lastName2"
-                          register={register}
-                          messageError={errors.lastName2?.message}
-                        />
-                      </div>
-                      <div className="col-span-6">
-                        <span className="mb-[2px] text-sm block">Email</span>
-                        <Input
-                          className="flex flex-col items-start"
-                          classNameInput="w-full p-2 outline-none bg-transparent border font-normal focus:border-blueColor bg-white rounded border border-gray-400"
-                          type="text"
-                          autoComplete="off"
-                          placeholder="Email"
-                          name="email"
-                          register={register}
-                          messageError={errors.email?.message}
-                        />
-                      </div>
-                      <div className="col-span-2">
-                        <span className="mb-[2px] text-sm block">Mã quốc gia/vùng</span>
-                        <InputSearchV2
-                          autoComplete="off"
-                          placeholder="Mã quốc gia/vùng"
-                          classNameList="z-20 absolute top-10 left-0 h-[200px] bg-whiteColor overflow-y-auto overflow-x-hidden rounded-sm shadow-sm transition-all duration-1000 ease-linear"
-                          classNameBlock="relative flex items-center"
-                          classNameInput="w-full px-2 py-[5px] outline-none bg-white text-base flex-grow truncate font-normal focus:border-blueColor text-textColor rounded border border-gray-400"
-                          ref={inputRef}
-                          value={codeNumber}
-                          showList={showListCodeNumber}
-                          handleChangeValue={(event) => setCodeNumber(event.target.value)}
-                          handleFocus={handleFocusAirportList}
-                          register={register}
-                          name="codeNumber"
-                        >
-                          <CodeNumberList
-                            listAirport={filterCodeNumber}
-                            handleItemClick={handleItemClick}
-                            inputName="codeNumber"
+                      <div className="p-4 grid grid-cols-6 items-center gap-2 flex-wrap">
+                        <div className="col-span-3">
+                          <span className="mb-[2px] text-sm block">
+                            Họ (vd: Pham) <span className="text-red-500">*</span>
+                          </span>
+                          <Input
+                            className="flex flex-col items-start"
+                            classNameInput="w-full p-2 outline-none bg-transparent border font-normal focus:border-blueColor bg-white rounded border border-gray-400 text-base"
+                            type="text"
+                            autoComplete="off"
+                            placeholder="Họ"
+                            name="lastName2"
+                            register={register}
+                            messageError={errors.lastName2?.message}
                           />
-                        </InputSearchV2>
+                        </div>
+                        <div className="col-span-3">
+                          <span className="mb-[2px] text-sm block">
+                            Tên Đệm & Tên (vd: Minh Thuan) <span className="text-red-500">*</span>
+                          </span>
+                          <Input
+                            className="flex flex-col items-start"
+                            classNameInput="w-full p-2 outline-none bg-transparent border font-normal focus:border-blueColor bg-white rounded border border-gray-400 text-base"
+                            type="text"
+                            autoComplete="off"
+                            placeholder="Tên"
+                            name="userName2"
+                            register={register}
+                            messageError={errors.userName2?.message}
+                          />
+                        </div>
+                        <div className="col-span-3 flex">
+                          <div className="w-[30%]">
+                            <span className="mb-[2px] text-sm block">Mã quốc gia</span>
+                            <InputSearchV2
+                              autoComplete="off"
+                              placeholder="Mã quốc gia"
+                              classNameList="z-20 absolute top-10 left-0 h-[200px] bg-whiteColor overflow-y-auto overflow-x-hidden rounded-sm shadow-sm transition-all duration-1000 ease-linear"
+                              classNameBlock="relative flex items-center"
+                              classNameInput="w-full p-2 outline-none bg-white text-base flex-grow truncate font-normal focus:border-blueColor text-textColor rounded-tl rounded-bl border border-gray-400"
+                              ref={inputRef}
+                              value={codeNumber}
+                              showList={showListCodeNumber}
+                              handleChangeValue={(event) => setCodeNumber(event.target.value)}
+                              handleFocus={() => setShowListCodeNumber(true)}
+                              register={register}
+                              name="codeNumber"
+                              error={errors.codeNumber?.message}
+                            >
+                              <CodeNumberList
+                                listAirport={filterCodeNumber}
+                                handleItemClick={handleItemClick}
+                                inputName="codeNumber"
+                              />
+                            </InputSearchV2>
+                          </div>
+                          <div className="w-[70%]">
+                            <span className="mb-[2px] text-sm block">Số điện thoại</span>
+                            <Input
+                              className="flex flex-col items-start"
+                              classNameInput="w-full p-2 outline-none bg-transparent border font-normal focus:border-blueColor bg-white rounded-tr rounded-br border text-base border-gray-400 border-l-0"
+                              type="text"
+                              autoComplete="off"
+                              placeholder="Số điện thoại"
+                              name="numberPhone"
+                              register={register}
+                              messageError={errors.numberPhone?.message}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-span-3">
+                          <span className="mb-[2px] text-sm block">Email</span>
+                          <Input
+                            className="flex flex-col items-start"
+                            classNameInput="w-full p-2 outline-none bg-transparent border font-normal focus:border-blueColor bg-white rounded border border-gray-400 text-base"
+                            type="text"
+                            autoComplete="off"
+                            placeholder="Email"
+                            name="email"
+                            register={register}
+                            messageError={errors.email?.message}
+                          />
+                        </div>
                       </div>
-                      <div className="col-span-4">
-                        <span className="mb-[2px] text-sm block">Số điện thoại</span>
-                        <Input
-                          className="flex flex-col items-start"
-                          classNameInput="w-full p-2 outline-none bg-transparent border font-normal focus:border-blueColor bg-white rounded border border-gray-400"
-                          type="text"
-                          autoComplete="off"
-                          placeholder="Số điện thoại"
-                          name="numberPhone"
-                          register={register}
-                          messageError={errors.numberPhone?.message}
+
+                      <div className="p-4 pt-0">
+                        <Button
+                          type="submit"
+                          loading={flightCreateOrderMutation.isPending}
+                          disable={flightCreateOrderMutation.isPending}
+                          classNameWrapper="flex justify-end"
+                          nameButton="Tiếp tục"
+                          className="py-2 bg-blueColor px-16 text-whiteColor text-base rounded-sm hover:bg-blueColor/80 duration-200 "
                         />
                       </div>
-                    </div>
-
-                    <Button
-                      type="submit"
-                      loading={flightCreateOrderMutation.isPending}
-                      disable={flightCreateOrderMutation.isPending}
-                      classNameWrapper="flex justify-end"
-                      nameButton="Tiếp tục"
-                      className="py-3 bg-blueColor px-6 text-whiteColor text-base rounded-sm hover:bg-blueColor/80 duration-200 "
-                    />
-                  </form>
+                    </form>
+                  </div>
                 </div>
               </div>
 

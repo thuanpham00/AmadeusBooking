@@ -17,7 +17,7 @@ export default function useScrollHeader(threshold: number) {
 
   // nếu scrollWindow có thay đổi thì nó tham chiếu tới chạy lại hàm này
   useEffect(() => {
-    setShowHeader(scrollWindow > threshold)
+    setShowHeader(scrollWindow > threshold) // nếu > thì => true // còn <= => false
   }, [showHeader, scrollWindow, threshold])
 
   return { showHeader }
