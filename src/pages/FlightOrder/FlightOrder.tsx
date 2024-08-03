@@ -9,7 +9,6 @@ import {
 } from "src/types/flight.type"
 import { produce } from "immer"
 import {
-  changeLanguageTraveller,
   formatCurrency,
   getAirlines,
   getCountry,
@@ -35,6 +34,8 @@ import Input from "src/components/Input"
 import InputSearchV2 from "./Components/InputSearchV2"
 import CodeNumberList from "./Components/CodeNumberList"
 import useScrollHeader from "src/hooks/useScrollHeader"
+import { path } from "src/constant/path"
+import usePriceTraveller from "src/hooks/usePriceTraveller"
 
 export type FormData = Pick<
   schemaType,
@@ -78,8 +79,6 @@ export default function FlightOrder() {
   const dataLS = localStorage.getItem("flightPriceData") as string
   const data = JSON.parse(dataLS) as ResponseFlightPrice
 
-  // const [currentInfant, setCurrentInfant] = useState<number>(0)
-
   const quantityOfTraveller = useMemo(() => {
     const count = { adult: 0, child: 0, infant: 0 }
     if (data) {
@@ -96,57 +95,9 @@ export default function FlightOrder() {
     return count
   }, [data])
 
-  const priceAdult = useMemo(() => {
-    const priceDetail = { total: "0", base: "0", fee: "0" }
-    if (data) {
-      {
-        const res = data.data.flightOffers[0].travelerPricings.find(
-          (item) => item.travelerType === "ADULT"
-        )
-        if (res) {
-          priceDetail.total = formatCurrency(Number(res.price.total))
-          priceDetail.base = formatCurrency(Number(res.price.base))
-          priceDetail.fee = formatCurrency(Number(res.price.total) - Number(res.price.base))
-        }
-      }
-    }
-    return priceDetail
-  }, [data])
-
-  const priceChild = useMemo(() => {
-    const priceDetail = { total: "0", base: "0", fee: "0" }
-    if (data) {
-      {
-        const res = data.data.flightOffers[0].travelerPricings.find(
-          (item) => item.travelerType === "CHILD"
-        )
-        if (res) {
-          priceDetail.total = formatCurrency(Number(res.price.total))
-          priceDetail.base = formatCurrency(Number(res.price.base))
-          priceDetail.fee = formatCurrency(Number(res.price.total) - Number(res.price.base))
-        }
-      }
-    }
-    return priceDetail
-  }, [data])
-
-  const priceInfant = useMemo(() => {
-    const priceDetail = { total: "0", base: "0", fee: "0" }
-    if (data) {
-      {
-        const res = data.data.flightOffers[0].travelerPricings.find(
-          (item) => item.travelerType === "HELD_INFANT"
-        )
-        if (res) {
-          priceDetail.total = formatCurrency(Number(res.price.total))
-          priceDetail.base = formatCurrency(Number(res.price.base))
-          priceDetail.fee = formatCurrency(Number(res.price.total) - Number(res.price.base))
-        }
-      }
-    }
-    return priceDetail
-  }, [data])
-
+  const priceAdult = usePriceTraveller(data, "ADULT")
+  const priceChild = usePriceTraveller(data, "CHILD")
+  const priceInfant = usePriceTraveller(data, "HELD_INFANT")
   const priceTotal = useMemo(() => {
     return data.data.flightOffers[0].travelerPricings.reduce(
       (result, current) => result + Number(current.price.total),
@@ -155,7 +106,6 @@ export default function FlightOrder() {
   }, [data])
 
   // cái này hay
-
   const handleCheckTraveller =
     (type: string, index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
       if (type === "adult") {
@@ -275,9 +225,16 @@ export default function FlightOrder() {
       onSuccess: () => {
         toast.dismiss(loadingToastId)
         toast.success("Lưu thông tin thành công")
+        navigate(path.flightPayment)
       }
     })
   })
+
+  useEffect(() => {
+    if (flightCreateOrderMutation.data?.data) {
+      localStorage.setItem("detailPayment", JSON.stringify(flightCreateOrderMutation.data.data))
+    }
+  }, [flightCreateOrderMutation.data?.data])
 
   return (
     <div>
@@ -288,7 +245,7 @@ export default function FlightOrder() {
 
       <div className="relative z-10">
         <div
-          className={`w-full bg-[#003566] ${showHeader ? "fixed top-0 left-1/2 -translate-x-1/2" : "absolute top-0 left-1/2 -translate-x-1/2"} z-50 transition-all ease-linear duration-1000`}
+          className={`w-full bg-blueColor ${showHeader ? "fixed top-0 left-1/2 -translate-x-1/2 shadow-xl" : "absolute top-0 left-1/2 -translate-x-1/2"} z-50 transition-all ease-linear duration-1000`}
         >
           <div className="container">
             <div className="py-4 px-1 grid grid-cols-12 items-center">
@@ -310,32 +267,30 @@ export default function FlightOrder() {
                       />
                     </svg>
                   </button>
-                  <h1 className="text-2xl text-whiteColor font-semibold">
+                  <h1 className="text-xl text-whiteColor font-semibold">
                     Hoàn tất đặt chỗ của bạn
                   </h1>
                 </div>
               </div>
-              <div className="col-span-5 col-start-8">
-                <div className="flex items-center justify-between gap-2 relative">
-                  <div className="flex flex-col items-center justify-center">
+              <div className="col-span-5 col-start-8 items-center flex flex-col">
+                <div className="w-[80%] flex items-center justify-between">
+                  <div>
                     <div className="w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs">
                       1
                     </div>
-                    <div className="text-sm text-whiteColor">Thông tin hành khách</div>
                   </div>
 
-                  <div className="absolute left-[15%] top-2 w-52 h-1 bg-gray-400"></div>
+                  <div className="w-52 h-1 bg-gray-400"></div>
 
-                  <div className="flex flex-col items-center justify-center">
+                  <div>
                     <div className="w-5 h-5 rounded-full bg-gray-400 text-white flex items-center justify-center text-xs">
                       2
                     </div>
-                    <div className="text-sm text-whiteColor">Chi tiết thanh toán</div>
                   </div>
 
-                  <div className="absolute left-[57%] top-2 w-44 h-1 bg-gray-400"></div>
+                  <div className="w-52 h-1 bg-gray-400"></div>
 
-                  <div className="flex flex-col items-center justify-center">
+                  <div>
                     <div className="w-5 h-5 rounded-full bg-gray-400 text-white flex items-center justify-center text-xs">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -352,8 +307,12 @@ export default function FlightOrder() {
                         />
                       </svg>
                     </div>
-                    <div className="text-sm text-whiteColor">Đã hoàn tất!</div>
                   </div>
+                </div>
+                <div className="w-full flex items-center justify-between">
+                  <div className="text-white text-sm">Thông tin hành khách</div>
+                  <div className="text-white text-sm">Chi tiết thanh toán</div>
+                  <div className="text-white text-sm">Đã xác nhận đặt vé!</div>
                 </div>
               </div>
             </div>
@@ -364,7 +323,7 @@ export default function FlightOrder() {
           <div className="container">
             <div className="grid grid-cols-12 gap-4">
               <div className="col-span-8">
-                <div id="FlightSummary" className="p-4 bg-[#fff] shadow-md rounded-xl">
+                <div className="p-4 bg-[#fff] shadow-md rounded-xl">
                   {data.data.flightOffers[0].itineraries.map((item, index) => (
                     <div
                       key={index}
@@ -467,7 +426,7 @@ export default function FlightOrder() {
                       <div className="bg-green-600 w-1 h-16 absolute left-0 top-4"></div>
 
                       {item.segments.map((detail, indexDetail) => (
-                        <div key={indexDetail}>
+                        <div key={indexDetail} className="mt-2">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                               <img src={iconFlight} alt="iconFlight" className="w-8 h-8" />
@@ -549,7 +508,7 @@ export default function FlightOrder() {
                   ))}
                 </div>
 
-                <div id="TravellerDetails" className="my-4">
+                <div className="my-4">
                   <h2 className="text-lg text-textColor font-semibold my-2">
                     Thông tin hành khách
                   </h2>
@@ -564,15 +523,6 @@ export default function FlightOrder() {
                           <span className="text-base text-textColor font-medium">
                             Người lớn (12 tuổi trở lên)
                           </span>
-                          {currentAdult === quantityOfTraveller.adult && (
-                            <div className="text-xs text-red-500">
-                              Bạn đã chọn {currentAdult} vé cho{" "}
-                              {changeLanguageTraveller(
-                                data.data.flightOffers[0].travelerPricings[0].travelerType
-                              )}
-                              . Loại bỏ trước khi thêm một cái mới.
-                            </div>
-                          )}
                         </div>
                         <div>
                           <span className="text-base text-textColor font-medium">
@@ -585,7 +535,13 @@ export default function FlightOrder() {
                         </div>
                       </div>
 
-                      <div className="mt-4">
+                      {currentAdult === quantityOfTraveller.adult && (
+                        <div className="text-xs text-red-500 p-2 pb-0">
+                          Bạn đã chọn tối đa vé cho Người lớn
+                        </div>
+                      )}
+
+                      <div className="mt-2">
                         {currentAdult === 0 ? (
                           <div className="p-4 bg-white shadow-md border-b border-b-gray-300">
                             <span className="text-sm text-gray-500">
@@ -603,8 +559,7 @@ export default function FlightOrder() {
                                 <input
                                   type="checkbox"
                                   className="w-4 h-4"
-                                  id={String(index)}
-                                  checked={checkState[index]}
+                                  checked={checkState[index] || false}
                                   onChange={handleCheckTraveller("adult", index)}
                                 />
                                 <label htmlFor={String(index)} className="absolute left-12">
@@ -654,15 +609,6 @@ export default function FlightOrder() {
                           <span className="text-base text-textColor font-medium">
                             Trẻ em (dưới 12 tuổi)
                           </span>
-                          {currentChild === quantityOfTraveller.child && (
-                            <div className="text-xs text-red-500">
-                              Bạn đã chọn {currentChild} vé cho{" "}
-                              {changeLanguageTraveller(
-                                data.data.flightOffers[0].travelerPricings[0].travelerType
-                              )}
-                              . Loại bỏ trước khi thêm một cái mới.
-                            </div>
-                          )}
                         </div>
                         <div>
                           <span className="text-base text-textColor font-medium">
@@ -675,7 +621,13 @@ export default function FlightOrder() {
                         </div>
                       </div>
 
-                      <div className="mt-4">
+                      {currentChild === quantityOfTraveller.child && (
+                        <div className="text-xs text-red-500 p-2 pb-0">
+                          Bạn đã chọn tối đa vé cho Trẻ em
+                        </div>
+                      )}
+
+                      <div className="mt-2">
                         {currentChild === 0 ? (
                           <div className="p-4 bg-white shadow-md border-b border-b-gray-300">
                             <span className="text-sm text-gray-500">
@@ -744,15 +696,6 @@ export default function FlightOrder() {
                           <span className="text-base text-textColor font-medium">
                             Em bé (dưới 2 tuổi)
                           </span>
-                          {currentInfant === quantityOfTraveller.infant && (
-                            <div className="text-xs text-red-500">
-                              Bạn đã chọn {currentInfant} vé cho{" "}
-                              {changeLanguageTraveller(
-                                data.data.flightOffers[0].travelerPricings[0].travelerType
-                              )}
-                              . Loại bỏ trước khi thêm một cái mới.
-                            </div>
-                          )}
                         </div>
                         <div>
                           <span className="text-base text-textColor font-medium">
@@ -765,7 +708,13 @@ export default function FlightOrder() {
                         </div>
                       </div>
 
-                      <div className="mt-4">
+                      {currentInfant === quantityOfTraveller.infant && (
+                        <div className="text-xs text-red-500 p-2 pb-0">
+                          Bạn đã chọn tối đa vé cho Em bé
+                        </div>
+                      )}
+
+                      <div className="mt-2">
                         {currentInfant === 0 ? (
                           <div className="p-4 bg-white shadow-md border-b border-b-gray-300">
                             <span className="text-sm text-gray-500">
@@ -867,11 +816,11 @@ export default function FlightOrder() {
                           />
                         </div>
                         <div className="col-span-3 flex">
-                          <div className="w-[30%]">
+                          <div className="w-[40%]">
                             <span className="mb-[2px] text-sm block">Mã quốc gia</span>
                             <InputSearchV2
                               autoComplete="off"
-                              placeholder="Mã quốc gia"
+                              placeholder="+84"
                               classNameList="z-20 absolute top-10 left-0 h-[200px] bg-whiteColor overflow-y-auto overflow-x-hidden rounded-sm shadow-sm transition-all duration-1000 ease-linear"
                               classNameBlock="relative flex items-center"
                               classNameInput="w-full p-2 outline-none bg-white text-base flex-grow truncate font-normal focus:border-blueColor text-textColor rounded-tl rounded-bl border border-gray-400"
@@ -891,7 +840,7 @@ export default function FlightOrder() {
                               />
                             </InputSearchV2>
                           </div>
-                          <div className="w-[70%]">
+                          <div className="w-[60%]">
                             <span className="mb-[2px] text-sm block">Số điện thoại</span>
                             <Input
                               className="flex flex-col items-start"
@@ -923,11 +872,11 @@ export default function FlightOrder() {
                       <div className="p-4 pt-0">
                         <Button
                           type="submit"
-                          loading={flightCreateOrderMutation.isPending}
                           disable={flightCreateOrderMutation.isPending}
-                          classNameWrapper="flex justify-end"
+                          classNameWrapper="flex justify-end relative"
                           nameButton="Tiếp tục"
-                          className="py-2 bg-blueColor px-16 text-whiteColor text-base rounded-sm hover:bg-blueColor/80 duration-200 "
+                          className="py-3 bg-blueColor px-12 text-whiteColor text-base rounded-sm hover:bg-blueColor/80 duration-200 "
+                          classNameLoading="absolute top-2 right-[14%]"
                         />
                       </div>
                     </form>
@@ -936,7 +885,7 @@ export default function FlightOrder() {
               </div>
 
               <div className="col-span-4">
-                <div className="sticky left-0 top-16 ">
+                <div className="sticky left-0 top-20 ">
                   <div className="bg-[#fff] p-4 shadow-md rounded-lg">
                     <span className="text-base mb-4 block font-medium">Phân tích giá</span>
                     {/* nó phải có type này trong data mới hiện giá
@@ -1043,7 +992,7 @@ export default function FlightOrder() {
                     </div>
                     <div className="mt-2 border-t border-t-gray-300 py-2 flex items-center justify-between">
                       <span className="text-sm font-medium">Phí xử lý</span>
-                      <span className="text-sm font-medium text-[#32a923]">0đ</span>
+                      <span className="text-sm font-medium text-[#32a923] uppercase">miễn phí</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-base block font-medium">Tổng cộng</span>
@@ -1054,8 +1003,8 @@ export default function FlightOrder() {
                     </div>
                   </div>
 
-                  <div id="InfoImportant" className="mt-4 bg-[#fff] p-4 shadow-md rounded-lg">
-                    <div className="overflow-y-auto h-[250px]">
+                  <div className="mt-4 bg-[#fff] p-4 shadow-md rounded-lg">
+                    <div className="overflow-y-auto h-[200px]">
                       <h2 className="text-base text-textColor font-semibold">Điều kiện đặt chỗ</h2>
                       <div>
                         <div className="mt-3 flex items-center gap-2">
@@ -1083,34 +1032,36 @@ export default function FlightOrder() {
                         </div>
                       </div>
 
-                      <div className="mt-3">
-                        <div className="mt-2 flex items-center gap-2">
-                          <img src={icon2} alt="icon" className="w-5 h-5" />
-                          <h3 className="text-sm text-textColor font-semibold">
-                            {
-                              data.data.flightOffers[0].itineraries[
-                                data.data.flightOffers[0].itineraries.length - 1
-                              ].segments[0].departure.iataCode
-                            }
-                            {"-"}
-                            {
-                              data.data.flightOffers[0].itineraries[
-                                data.data.flightOffers[0].itineraries.length - 1
-                              ].segments[
-                                data.data.flightOffers[0].itineraries[0].segments.length - 1
-                              ].arrival.iataCode
-                            }
-                            : Yêu cầu Visa quá cảnh
-                          </h3>
+                      {data.data.flightOffers[0].itineraries.length > 1 && (
+                        <div className="mt-3">
+                          <div className="mt-2 flex items-center gap-2">
+                            <img src={icon2} alt="icon" className="w-5 h-5" />
+                            <h3 className="text-sm text-textColor font-semibold">
+                              {
+                                data.data.flightOffers[0].itineraries[
+                                  data.data.flightOffers[0].itineraries.length - 1
+                                ].segments[0].departure.iataCode
+                              }
+                              {"-"}
+                              {
+                                data.data.flightOffers[0].itineraries[
+                                  data.data.flightOffers[0].itineraries.length - 1
+                                ].segments[
+                                  data.data.flightOffers[0].itineraries[0].segments.length - 1
+                                ].arrival.iataCode
+                              }
+                              : Yêu cầu Visa quá cảnh
+                            </h3>
+                          </div>
+                          <div className="flex items-center gap-2 mt-2 ml-2">
+                            <div className="h-1 w-1 rounded-full bg-textColor"></div>
+                            <span className="text-sm text-gray-600 max-w-[350px]">
+                              Vui lòng kiểm tra các yêu cầu về Quá cảnh/Visa trước khi bạn lên kế
+                              hoạch cho chuyến đi của mình.
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2 mt-2 ml-2">
-                          <div className="h-1 w-1 rounded-full bg-textColor"></div>
-                          <span className="text-sm text-gray-600 max-w-[350px]">
-                            Vui lòng kiểm tra các yêu cầu về Quá cảnh/Visa trước khi bạn lên kế
-                            hoạch cho chuyến đi của mình.
-                          </span>
-                        </div>
-                      </div>
+                      )}
 
                       <div className="mt-3">
                         <div className="flex items-center gap-2">

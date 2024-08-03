@@ -90,7 +90,6 @@ export default function FormProfile({ addOnTraveller }: Props) {
   }
 
   const handleSubmitForm = handleSubmit((data) => {
-    console.log(data)
     const infoTraveller: TravellerType = {
       dateOfBirth: `${data.yearBirth}-${data.monthBirth}-${data.dayBirth}`,
       name: {
@@ -136,7 +135,6 @@ export default function FormProfile({ addOnTraveller }: Props) {
         // Sử dụng regex để chỉ cho phép nhập số
         // thay thế các kí tự không phải kí tự số bằng ""
         const valueInput2 = valueInput.replace(/[^0-9]/g, "")
-        console.log(valueInput2)
         setValue(nameInput, valueInput2)
       }
     }
@@ -175,7 +173,7 @@ export default function FormProfile({ addOnTraveller }: Props) {
             className="flex flex-col items-start"
             classNameInput="w-full p-2 outline-none bg-transparent border font-normal focus:border-blueColor bg-white rounded border border-gray-400"
             type="text"
-            autoComplete="off"
+            autoComplete="on"
             placeholder="Tên & tên đệm"
             name="userName"
             register={register}
@@ -189,7 +187,7 @@ export default function FormProfile({ addOnTraveller }: Props) {
             className="flex flex-col items-start"
             classNameInput="w-full p-2 outline-none bg-transparent border font-normal focus:border-blueColor bg-white rounded border border-gray-400"
             type="text"
-            autoComplete="off"
+            autoComplete="on"
             placeholder="Họ"
             name="lastName"
             register={register}
@@ -204,7 +202,7 @@ export default function FormProfile({ addOnTraveller }: Props) {
               className="flex-1 flex flex-col items-start"
               classNameInput="rounded-tl rounded-bl w-full p-2 outline-none bg-white font-normal focus:border-blueColor border border-gray-400"
               type="text"
-              autoComplete="off"
+              autoComplete="on"
               placeholder="1990"
               name="yearBirth"
               messageError={errors.yearBirth?.message}
@@ -215,7 +213,7 @@ export default function FormProfile({ addOnTraveller }: Props) {
               className="flex-1 flex flex-col items-start"
               classNameInput="w-full p-2 outline-none bg-white font-normal focus:border-blueColor border border-gray-400"
               type="text"
-              autoComplete="off"
+              autoComplete="on"
               placeholder="01"
               name="monthBirth"
               messageError={errors.monthBirth?.message}
@@ -226,7 +224,7 @@ export default function FormProfile({ addOnTraveller }: Props) {
               className="flex-1 flex flex-col items-start"
               classNameInput="rounded-tr rounded-br w-full p-2 outline-none bg-white font-normal focus:border-blueColor border border-gray-400"
               type="text"
-              autoComplete="off"
+              autoComplete="on"
               placeholder="01"
               name="dayBirth"
               messageError={errors.dayBirth?.message}
@@ -238,7 +236,7 @@ export default function FormProfile({ addOnTraveller }: Props) {
         <div className="col-span-3">
           <span className="mb-[2px] text-sm block">Quốc tịch</span>
           <InputSearchV2
-            autoComplete="off"
+            autoComplete="on"
             placeholder="Quốc tịch"
             classNameList="z-20 absolute top-10 left-0 h-[200px] bg-whiteColor overflow-y-auto overflow-x-hidden rounded-sm shadow-sm transition-all duration-1000 ease-linear"
             classNameBlock="relative flex items-center"

@@ -186,6 +186,19 @@ export type AirportCodeItem = {
 }
 export type AirportCodeList = AirportCodeItem[]
 
+export type countTravelerType = {
+  adult: number
+  child: number
+  infant: number
+}
+
+export type CountryItemCodeNumber = {
+  code: string
+  name: string
+}
+
+export type CountryListCodeNumber = CountryItemCodeNumber[]
+
 // response của flight offer search
 export type ResponseFlightItem = {
   // Thông tin chung về chuyến bay
@@ -273,6 +286,7 @@ export type ResponseFlightItem = {
           includedCheckedBags: {
             weight: number // Trọng lượng hành lý ký gửi
             weightUnit: string // Đơn vị trọng lượng (e.g., "KG")
+            quantity: number
           }
         }
       ]
@@ -412,15 +426,159 @@ export type ResponseFlightPriceItem = {
   paymentCardRequired: false
 }
 
-export type countTravelerType = {
-  adult: number
-  child: number
-  infant: number
+// response của flight create order
+export type ResponseFlightOrder = {
+  data: {
+    type: "flight-order"
+    id: string
+    queuingOfficeId: string
+    associatedRecords: {
+      reference: string
+      creationDateTime: string
+      originSystemCode: string
+      flightOfferId: string
+    }[]
+    travelers: {
+      id: string
+      dateOfBirth: string
+      name: {
+        firstName: string
+        lastName: string
+      }
+      contact?: {
+        phones: [
+          {
+            countryCallingCode: string
+            number: string
+          }
+        ]
+      }
+      documents: [DocumentType]
+    }[]
+    flightOffers: {
+      id: string
+      type: string
+      source: string
+      itineraries: {
+        duration: string
+        segments: Array<{
+          id: string
+          duration: string
+          aircraft: {
+            code: string
+          }
+          numberOfStops: number
+          blacklistedInEU: boolean
+          carrierCode: string
+          operating: {
+            carrierCode: string
+          }
+          number: string
+          departure: {
+            at: string
+            terminal: string
+            iataCode: string
+          }
+          arrival: {
+            at: string
+            terminal: string
+            iataCode: string
+          }
+          co2Emissions: Array<{
+            weight: string
+            weightUnit: string
+            cabin: string
+          }>
+        }>
+      }[]
+      price: {
+        grandTotal: string
+        total: string
+        base: string
+        currency: string
+        billingCurrency: string
+        fees: Array<{
+          type: string
+          amount: string
+        }>
+        additionalServices: Array<{
+          type: string
+          amount: string
+        }>
+      }
+      pricingOptions: {
+        fareType: Array<string>
+        includedCheckedBags: boolean
+      }
+      validatingAirlineCodes: Array<string>
+      travelerPricings: Array<{
+        travelerId: string
+        fareOption: string
+        travelerType: string
+        price: {
+          currency: string
+          total: string
+          base: string
+          taxes: Array<{
+            code: string
+            amount: string
+          }>
+        }
+        fareDetailsBySegment: Array<{
+          segmentId: string
+          cabin: string
+          fareBasis: string
+          brandedFare: string
+          class: string
+          isAllotment: boolean
+          allotmentDetails: {
+            tourName: string
+            tourReference: string
+          }
+          sliceDiceIndicator: string
+          includedCheckedBags: {
+            quantity: number
+          }
+          additionalServices?: {
+            chargeableCheckedBags?: {
+              quantity: number
+              weight: number
+            }
+            chargeableSeatNumber?: string
+          }
+        }>
+      }>
+    }[]
+    ticketingAggreement: {
+      option: string
+      dateTime: string
+    }
+    contacts: {
+      companyName: string
+      purpose: string
+      phones: Array<{
+        deviceType: string
+        countryCallingCode: string
+        number: string
+      }>
+      emailAddress: string
+      address: {
+        lines: Array<string>
+        postalCode: string
+        cityName: string
+        countryCode: string
+      }
+      addresseeName: {
+        firstName: string
+      }
+    }[]
+  }
+  dictionaries: {
+    locations: {
+      [key: string]: {
+        cityCode: string
+        countryCode: string
+      }
+    }
+  }
 }
-
-export type CountryItemCodeNumber = {
-  code: string
-  name: string
-}
-
-export type CountryListCodeNumber = CountryItemCodeNumber[]

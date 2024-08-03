@@ -95,7 +95,7 @@ export default function FlightItem({ item, list }: Props) {
                 className="grid grid-cols-12 items-center p-4 pt-10 border-b border-b-gray-200"
               >
                 <div className="col-span-3 relative">
-                  <div className="absolute -top-10 left-0 bg-gray-200 rounded-full p-1 text-xs flex items-center justify-center gap-[2px]">
+                  <div className="absolute -top-8 left-0 bg-gray-200 rounded-full p-1 text-xs flex items-center justify-center gap-[2px]">
                     <img src={iconFlight2} alt="icon" className="w-5 h-5" />
                     <span>{item.travelerPricings[0].fareDetailsBySegment[0].cabin}</span>
                   </div>
@@ -200,9 +200,27 @@ export default function FlightItem({ item, list }: Props) {
                   />
                 </AlertDialogTrigger>
                 <AlertDialogContent className="block">
-                  <AlertDialogTitle className="flex gap-2 shadow-md px-6 py-4">
-                    CÓ NHIỀU LỰA CHỌN GIÁ CẢ HƠN cho chuyến đi của bạn.
-                    <img src={icon2} alt="icon2" className="w-32 h-7" />
+                  <AlertDialogTitle className="flex items-center justify-between gap-2 shadow-md px-6 py-2">
+                    <div className="flex items-center gap-2">
+                      CÓ NHIỀU LỰA CHỌN GIÁ CẢ HƠN cho chuyến đi của bạn.
+                      <img src={icon2} alt="icon2" className="w-32 h-7" />
+                    </div>
+                    <AlertDialogCancel className="border-none shadow-none p-0">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="gray"
+                        className="w-7 h-7"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M6 18 18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </AlertDialogCancel>
                   </AlertDialogTitle>
                   <AlertDialogDescription className="px-6 py-3">
                     <div className="flex items-center gap-2 bg-orange-200 p-1">
@@ -441,11 +459,15 @@ export default function FlightItem({ item, list }: Props) {
 
                       <AlertDialogFooter className="mt-4 py-2 px-6 border-t border-t-gray-300">
                         <div className="flex items-center gap-2">
-                          <AlertDialogCancel className="py-5">Hủy</AlertDialogCancel>
+                          <Button
+                            onClick={handleNavigatePage}
+                            nameButton="Thêm vào giỏ hàng"
+                            className="capitalize py-2 px-4 text-blueColor w-full border border-gray-300 text-sm rounded-full bg-transparent hover:bg-gray-100 hover:border-blueColor duration-200"
+                          />
                           <Button
                             onClick={handleNavigatePage}
                             nameButton="Đặt vé ngay!"
-                            className="uppercase py-2 px-4 bg-blueColor w-full text-whiteColor text-base rounded-sm hover:bg-blueColor/80 duration-200"
+                            className="uppercase py-2 px-4 bg-blueColor w-full text-whiteColor text-sm rounded-full bg-tra hover:bg-blueColor/80 duration-200"
                           />
                         </div>
                       </AlertDialogFooter>
@@ -537,27 +559,34 @@ export default function FlightItem({ item, list }: Props) {
             ))}
             <div className="px-5 pb-2 flex items-center gap-4">
               <span className="flex gap-1">
-                <span className="text-sm font-semibold">Baggage:</span>
-                <span className="text-sm">{item.travelerPricings[0].travelerType}</span>
-              </span>
-              <span className="flex gap-1">
-                <span className="text-sm font-semibold">Check in:</span>
-                <span className="text-sm">
-                  {item.travelerPricings[0].fareDetailsBySegment[0].includedCheckedBags.weight}Kg
+                <span className="text-sm">Hành lý:</span>
+                <span className="text-sm font-semibold">
+                  {item.travelerPricings[0].travelerType}
                 </span>
               </span>
               <span className="flex gap-1">
-                <span className="text-sm font-semibold">Cabin:</span>
-                <span className="text-sm">
+                <span className="text-sm">Số lượng:</span>
+                <span className="text-sm font-semibold">
+                  {item.travelerPricings[0].fareDetailsBySegment[0].includedCheckedBags.quantity ||
+                    `${item.travelerPricings[0].fareDetailsBySegment[0].includedCheckedBags.weight}kg`}
+                </span>
+              </span>
+              <span className="flex gap-1">
+                <span className="text-sm">Cabin:</span>
+                <span className="text-sm font-semibold">
                   {item.travelerPricings[0].fareDetailsBySegment[0].cabin}
                 </span>
               </span>
               <span className="flex gap-1">
-                <span className="text-sm font-semibold">Class:</span>
-                <span className="text-sm">
+                <span className="text-sm">Class:</span>
+                <span className="text-sm font-semibold">
                   {item.travelerPricings[0].fareDetailsBySegment[0].class}
                 </span>
               </span>
+            </div>
+            <div className="px-5 pb-2 flex items-center gap-2">
+              <span className="text-sm">Ngày cuối cùng có thể đặt vé:</span>
+              <span className="text-sm font-semibold">{item.lastTicketingDate}</span>
             </div>
           </div>
         )}

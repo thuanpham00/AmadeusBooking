@@ -5,7 +5,6 @@ import { AppContext } from "src/context/useContext"
 import MainLayout from "src/layouts/MainLayout"
 import MainLayout2 from "src/layouts/MainLayout2"
 import RegisterLayout from "src/layouts/RegisterLayout"
-import FlightOrder from "src/pages/FlightOrder"
 
 /**
  * Khi url thay đổi thì các component nào dùng các hook như
@@ -19,6 +18,8 @@ const Login = lazy(() => import("src/pages/Login"))
 const Register = lazy(() => import("src/pages/Register"))
 const Flight = lazy(() => import("src/pages/Flight"))
 const FlightSearch = lazy(() => import("src/pages/FlightSearch"))
+const FlightOrder = lazy(() => import("src/pages/FlightOrder"))
+const FlightPayment = lazy(() => import("src/pages/FlightPayment"))
 
 function ProtectedRouter() {
   const { isAuthenticated } = useContext(AppContext)
@@ -79,6 +80,14 @@ export default function useRouterElement() {
               element: (
                 <Suspense>
                   <FlightOrder />
+                </Suspense>
+              )
+            },
+            {
+              path: path.flightPayment,
+              element: (
+                <Suspense>
+                  <FlightPayment />
                 </Suspense>
               )
             }

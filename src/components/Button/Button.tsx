@@ -6,6 +6,8 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   disable?: boolean
   loading?: boolean
   classNameWrapper?: string
+  classNameLoading?: string
+  children?: React.ReactNode
 }
 
 export default function Button({
@@ -14,6 +16,8 @@ export default function Button({
   disable,
   loading,
   classNameWrapper = "relative",
+  classNameLoading = "absolute top-[18px] left-28",
+  children,
   ...rest
 }: ButtonProps) {
   const classNameResult = disable ? className + " cursor-not-allowed" : className
@@ -21,10 +25,11 @@ export default function Button({
     <div className={classNameWrapper}>
       <button className={classNameResult} disabled={disable} {...rest}>
         {nameButton}
+        {children}
       </button>
 
       {loading && (
-        <div role="status" className="absolute top-[18px] left-28">
+        <div role="status" className={classNameLoading}>
           <svg
             aria-hidden="true"
             className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"

@@ -17,7 +17,7 @@ import { Controller, useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import schema, { schemaType } from "src/utils/rules"
 import { airportCodes, bannerAirLineList, travelClassList } from "src/constant/flightSearch"
-import { Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react"
+import { Fragment, useContext, useEffect, useMemo, useRef, useState } from "react"
 import { convertToYYYYMMDD, getCodeAirport, getNameToEmail } from "src/utils/utils"
 import { AirportCodeList } from "src/types/flight.type"
 import InputSearch from "src/components/InputSearch"
@@ -70,9 +70,18 @@ const fetchDataAirport = () => Promise.resolve(airportCodes) // khởi tạo 1 p
 // component chỉ re-render khi props hoặc state thay đổi
 
 export default function Flight() {
-  // xử lý header
   const { isAuthenticated, isProfile, setIsAuthenticated, setIsProfile } = useContext(AppContext)
+  // xử lý loading
+  const [loading, setLoading] = useState(true)
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setLoading(false)
+    }, 1500)
 
+    return () => clearTimeout(timeout)
+  }, [])
+
+  // xử lý header
   const handleLogOut = () => {
     clearLS()
     setIsAuthenticated(false)
@@ -112,23 +121,11 @@ export default function Flight() {
   const [flightType, setFlightType] = useState("oneWay")
   const [showPassenger, setShowPassenger] = useState(0)
 
-  const handleFlightTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFlightType(event.target.id)
-  }
-
   useEffect(() => {
     fetchDataAirport().then((res) => {
       setAirportCodeList(res)
     })
   }, [])
-
-  const handleFocusAirportList = (listShow: string) => () => {
-    if (listShow === "1") {
-      setShowListAirport(true)
-    } else if (listShow === "2") {
-      setShowListAirport2(true)
-    }
-  }
 
   useEffect(() => {
     const clickOutHideListAirport = (event: MouseEvent) => {
@@ -148,17 +145,6 @@ export default function Flight() {
 
   //`useCallback()`: khi cta không muốn function của cta được khởi tạo lại mỗi lần component chúng ta re-render - nếu có thay đổi nó mới chạy lại - re-render
   //`useMemo()`: tương tự, khi chúng ta muốn một biến không bị làm mới lại mỗi lần component re-render. - nếu có thay đổi nó mới chạy lại - re-render
-  const handleChangeValue = useCallback(
-    (input: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (input === "input_1") {
-        setSearchText(event.target.value)
-      } else if (input === "input_2") {
-        setSearchText2(event.target.value)
-      }
-    },
-    []
-  )
-
   const filterAirportCodeList_1 = useMemo(
     () =>
       airportCodeList.filter((item) =>
@@ -196,10 +182,9 @@ export default function Flight() {
     } else if (nameQuantity === "infants") {
       setNumberInfants(value)
     }
-    setShowPassenger(numberAdults + numberChildren + numberInfants)
   }
 
-  useMemo(() => {
+  useEffect(() => {
     setShowPassenger(numberAdults + numberChildren + numberInfants)
   }, [numberAdults, numberChildren, numberInfants])
 
@@ -251,22 +236,11 @@ export default function Flight() {
     )
   })
 
-  // xử lý loading
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setLoading(false)
-    }, 1500)
-
-    return () => clearTimeout(timeout)
-  }, [])
-
   return (
     // khắc phục lệch layout
     <div className="h-[2650px] bg-[#fff]">
       {loading ? (
-        <Skeleton className="flex flex-col justify-center items-center absolute left-1/2 top-[15%] -translate-x-1/2 -translate-y-1/2" />
+        <Skeleton className="flex flex-col justify-center items-center absolute left-1/2 top-[10%] -translate-x-1/2 -translate-y-1/2" />
       ) : (
         <Fragment>
           <Helmet>
@@ -276,7 +250,7 @@ export default function Flight() {
 
           <div className="w-full h-[600px]">
             <div
-              className=" w-full h-full relative"
+              className=" w-full h-full"
               style={{
                 backgroundImage: `url(${bg1})`,
                 backgroundPosition: "center",
@@ -285,7 +259,7 @@ export default function Flight() {
               }}
             >
               <div className="container">
-                <div className="flex items-center justify-between p-4">
+                <div className="flex items-center justify-between py-4">
                   <div className="flex items-center gap-2">
                     <div className="hidden md:block w-10 h-10">
                       <img src={logo} alt="Logo" className="w-full h-full object-contain" />
@@ -314,6 +288,23 @@ export default function Flight() {
                         Ngôn ngữ
                       </div>
                     </Popover>
+
+                    <Link to="">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="white"
+                        className="h-6 w-6"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
+                        />
+                      </svg>
+                    </Link>
 
                     {isAuthenticated && (
                       <Popover
@@ -390,359 +381,371 @@ export default function Flight() {
                 <h1 className="text-whiteColor md:text-2xl lg:text-4xl font-semibold text-center my-2 lg:my-8">
                   Từ Đông Nam Á Đến Thế Giới, Trong Tầm Tay Bạn.
                 </h1>
-              </div>
 
-              <div className="w-[55%] absolute left-1/2 md:top-[23%] lg:top-[25%] -translate-x-1/2 z-20">
-                <div className="py-4 px-8 bg-whiteColor rounded-lg shadow-lg">
-                  <nav className="flex items-center gap-4">
-                    <Link to={path.flight} className="flex flex-col items-center">
-                      <div className="w-8 h-8">
-                        <img src={iconFlight} alt="icon" className="w-full h-full" />
-                      </div>
-                      <span className="mt-1 text-sm font-semibold text-blueColor">Chuyến bay</span>
-                    </Link>
-                    <Link to={path.flight} className="flex flex-col items-center">
-                      <div className="w-8 h-8">
-                        <img src={hotel} alt="icon" className="w-full h-full" />
-                      </div>
-                      <span className="mt-1 text-sm font-normal text-textColor">Khách sạn</span>
-                    </Link>
-                  </nav>
+                <div className="relative z-20 mx-auto w-[55%]">
+                  <div className="py-4 px-8 bg-whiteColor rounded-lg shadow-lg">
+                    <nav className="flex items-center gap-4">
+                      <Link to={path.flight} className="flex flex-col items-center">
+                        <div className="w-8 h-8">
+                          <img src={iconFlight} alt="icon" className="w-full h-full" />
+                        </div>
+                        <span className="mt-1 text-sm font-semibold text-blueColor">
+                          Chuyến bay
+                        </span>
+                      </Link>
+                      <Link to={path.flight} className="flex flex-col items-center">
+                        <div className="w-8 h-8">
+                          <img src={hotel} alt="icon" className="w-full h-full" />
+                        </div>
+                        <span className="mt-1 text-sm font-normal text-textColor">Khách sạn</span>
+                      </Link>
+                    </nav>
+                  </div>
                 </div>
-              </div>
 
-              <div className="w-[75%] absolute top-[60%] left-1/2 -translate-x-1/2 -translate-y-1/2">
-                <form
-                  autoComplete="off"
-                  onSubmit={handleSubmitSearch}
-                  noValidate
-                  className="p-8 pt-16 bg-whiteColor rounded-lg shadow-md"
-                >
-                  {/* loại chuyến bay */}
-                  <div className="mt-2 flex items-center gap-4">
-                    <div className="flex items-center gap-1">
-                      <input
-                        type="radio"
-                        name="flight"
-                        id="oneWay"
-                        checked={flightType === "oneWay"}
-                        onChange={handleFlightTypeChange}
-                        className="w-5 h-5"
-                      />
-                      <label htmlFor="oneWay" className="text-base text-textColor font-semibold">
-                        Một chiều
-                      </label>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <input
-                        type="radio"
-                        name="flight"
-                        id="roundTrip"
-                        checked={flightType === "roundTrip"}
-                        onChange={handleFlightTypeChange}
-                        className="w-5 h-5"
-                      />
-                      <label htmlFor="roundTrip" className="text-base text-textColor font-semibold">
-                        Khứ hồi
-                      </label>
-                    </div>
-                  </div>
-
-                  <div className="mt-8 flex relative gap-2">
-                    {/* điểm xuất phát */}
-                    <InputSearch
-                      placeholder="Bay từ"
-                      classNameList="z-20 absolute top-16 left-0 h-[300px] bg-whiteColor overflow-y-auto overflow-x-hidden rounded-sm shadow-sm transition-all duration-1000 ease-linear"
-                      ref={inputRef}
-                      filterList={filterAirportCodeList_1}
-                      value={searchText}
-                      showList={showListAirport}
-                      handleItemClick={handleItemClick}
-                      inputName="originLocationCode"
-                      handleChangeValue={handleChangeValue("input_1")}
-                      handleFocus={handleFocusAirportList("1")}
-                      register={register}
-                      name="originLocationCode"
-                      error={errors.originLocationCode?.message}
-                      desc="Từ"
-                    >
-                      <img src={iconFlight} alt="icon flight" className="w-10 h-10 flex-shrink-0" />
-                    </InputSearch>
-                    {/* điểm đến */}
-                    <InputSearch
-                      placeholder="Bay đến"
-                      classNameList="z-20 absolute top-16 left-0 h-[300px] bg-whiteColor overflow-y-auto overflow-x-hidden rounded-sm shadow-sm transition-all duration-1000 ease-linear"
-                      ref={inputRef2}
-                      filterList={filterAirportCodeList_2}
-                      value={searchText2}
-                      showList={showListAirport2}
-                      handleItemClick={handleItemClick}
-                      inputName="destinationLocationCode"
-                      handleChangeValue={handleChangeValue("input_2")}
-                      handleFocus={handleFocusAirportList("2")}
-                      register={register}
-                      name="destinationLocationCode"
-                      error={errors.destinationLocationCode?.message}
-                      desc="Đến"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="h-10 w-10 flex-shrink-0"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15 10.5a4 3 4 1 1-6 0 3 3 0 0 1 6 0Z"
+                <div className="-mt-8 mx-auto w-[90%]">
+                  <form
+                    autoComplete="off"
+                    onSubmit={handleSubmitSearch}
+                    noValidate
+                    className="p-8 pt-16 bg-whiteColor rounded-lg shadow-md"
+                  >
+                    {/* loại chuyến bay */}
+                    <div className="mt-2 flex items-center gap-4">
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="radio"
+                          name="flight"
+                          id="oneWay"
+                          checked={flightType === "oneWay"}
+                          onChange={(event) => setFlightType(event.target.id)}
+                          className="w-5 h-5"
                         />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
+                        <label htmlFor="oneWay" className="text-base text-textColor font-semibold">
+                          Một chiều
+                        </label>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="radio"
+                          name="flight"
+                          id="roundTrip"
+                          checked={flightType === "roundTrip"}
+                          onChange={(event) => setFlightType(event.target.id)}
+                          className="w-5 h-5"
                         />
-                      </svg>
-                    </InputSearch>
-
-                    {/* đổi 2 giá trị với nhau */}
-                    <button
-                      aria-label="buttonChangeValue"
-                      type="button"
-                      onClick={exchangeTwoValues}
-                      className="z-20 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 flex items-center justify-center w-7 h-7 rounded-full text-blueColor border-2 border-blueColor bg-blue-100"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="h-5 w-5"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-
-                  <div className="mt-8 flex justify-between items-center gap-2 flex-wrap">
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between gap-2">
-                        {/* Khứ hồi hoặc 1 chiều */}
-                        <div
-                          className={
-                            flightType === "roundTrip"
-                              ? "w-[70%] flex justify-start gap-2"
-                              : "w-[70%] flex justify-start"
-                          }
+                        <label
+                          htmlFor="roundTrip"
+                          className="text-base text-textColor font-semibold"
                         >
-                          {/* date ngày đi*/}
-                          <div className={flightType === "roundTrip" ? "w-[50%]" : "w-[100%]"}>
-                            <SelectDate
-                              text="Ngày khởi hành"
-                              control={control}
-                              setDate={setDate}
-                              date={date}
-                              name="departureDate"
-                              errors={errors.departureDate?.message as string}
-                              convertToYYYYMMDD={convertToYYYYMMDD}
-                            />
+                          Khứ hồi
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="mt-8 flex relative gap-2">
+                      {/* điểm xuất phát */}
+                      <InputSearch
+                        placeholder="Bay từ"
+                        classNameList="z-20 absolute top-16 left-0 h-[300px] bg-whiteColor overflow-y-auto overflow-x-hidden rounded-sm shadow-sm transition-all duration-1000 ease-linear"
+                        ref={inputRef}
+                        filterList={filterAirportCodeList_1}
+                        value={searchText}
+                        showList={showListAirport}
+                        handleItemClick={handleItemClick}
+                        inputName="originLocationCode"
+                        handleChangeValue={(event) => setSearchText(event.target.value)}
+                        handleFocus={() => setShowListAirport(true)}
+                        register={register}
+                        name="originLocationCode"
+                        error={errors.originLocationCode?.message}
+                        desc="Từ"
+                      >
+                        <img
+                          src={iconFlight}
+                          alt="icon flight"
+                          className="w-10 h-10 flex-shrink-0"
+                        />
+                      </InputSearch>
+                      {/* điểm đến */}
+
+                      <InputSearch
+                        placeholder="Bay đến"
+                        classNameList="z-20 absolute top-16 left-0 h-[300px] bg-whiteColor overflow-y-auto overflow-x-hidden rounded-sm shadow-sm transition-all duration-1000 ease-linear"
+                        ref={inputRef2}
+                        filterList={filterAirportCodeList_2}
+                        value={searchText2}
+                        showList={showListAirport2}
+                        handleItemClick={handleItemClick}
+                        inputName="destinationLocationCode"
+                        handleChangeValue={(event) => setSearchText2(event.target.value)}
+                        handleFocus={() => setShowListAirport2(true)}
+                        register={register}
+                        name="destinationLocationCode"
+                        error={errors.destinationLocationCode?.message}
+                        desc="Đến"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="h-10 w-10 flex-shrink-0"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M15 10.5a4 3 4 1 1-6 0 3 3 0 0 1 6 0Z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
+                          />
+                        </svg>
+                      </InputSearch>
+
+                      {/* đổi 2 giá trị với nhau */}
+                      <button
+                        aria-label="buttonChangeValue"
+                        type="button"
+                        onClick={exchangeTwoValues}
+                        className="z-20 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 flex items-center justify-center w-7 h-7 rounded-full text-blueColor border-2 border-blueColor bg-blue-100"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="h-5 w-5"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+
+                    <div className="mt-8 flex justify-between items-center gap-2 flex-wrap">
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between gap-2">
+                          {/* Khứ hồi hoặc 1 chiều */}
+                          <div
+                            className={
+                              flightType === "roundTrip"
+                                ? "w-[70%] flex justify-start gap-2"
+                                : "w-[70%] flex justify-start"
+                            }
+                          >
+                            {/* date ngày đi*/}
+                            <div className={flightType === "roundTrip" ? "w-[50%]" : "w-[100%]"}>
+                              <SelectDate
+                                text="Ngày khởi hành"
+                                control={control}
+                                setDate={setDate}
+                                date={date}
+                                name="departureDate"
+                                errors={errors.departureDate?.message as string}
+                                convertToYYYYMMDD={convertToYYYYMMDD}
+                              />
+                            </div>
+
+                            {/* date ngày về */}
+                            <div
+                              className={flightType === "roundTrip" ? "w-[50%]" : "hidden w-[0%]"}
+                            >
+                              <SelectDate
+                                text="Ngày về"
+                                control={control}
+                                setDate={setDate2}
+                                date={date2}
+                                name="returnDate"
+                                errors={errors.returnDate?.message as string}
+                                convertToYYYYMMDD={convertToYYYYMMDD}
+                              />
+                            </div>
                           </div>
 
-                          {/* date ngày về */}
-                          <div className={flightType === "roundTrip" ? "w-[50%]" : "hidden w-[0%]"}>
-                            <SelectDate
-                              text="Ngày về"
-                              control={control}
-                              setDate={setDate2}
-                              date={date2}
-                              name="returnDate"
-                              errors={errors.returnDate?.message as string}
-                              convertToYYYYMMDD={convertToYYYYMMDD}
-                            />
-                          </div>
-                        </div>
+                          {/* hành khách */}
+                          <div
+                            className={`w-[30%] py-3 border-2 rounded-md flex items-center justify-center ${errors.adults?.message ? "border-red-500 bg-red-100" : "border-gray-300"}`}
+                          >
+                            <PopoverShadcn>
+                              <PopoverTrigger>
+                                <div className="flex items-center cursor-pointer">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="h-4 w-4"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                                    />
+                                  </svg>
 
-                        {/* hành khách */}
-                        <div
-                          className={`w-[30%] py-3 border-2 rounded-md flex items-center justify-center ${errors.adults?.message ? "border-red-500 bg-red-100" : "border-gray-300"}`}
-                        >
-                          <PopoverShadcn>
-                            <PopoverTrigger>
-                              <div className="flex items-center cursor-pointer">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  strokeWidth={1.5}
-                                  stroke="currentColor"
-                                  className="h-5 w-5"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                                  <input
+                                    aria-label="Traveler"
+                                    type="text"
+                                    className="w-[25px] py-1 outline-none bg-transparent text-base text-center"
+                                    value={showPassenger}
+                                    readOnly
                                   />
-                                </svg>
 
-                                <input
-                                  aria-label="Traveler"
-                                  type="text"
-                                  className="w-[25px] py-1 outline-none bg-transparent text-base text-center"
-                                  value={showPassenger}
-                                  readOnly
-                                />
+                                  <span className="text-base text-textColor font-semibold">
+                                    Khách
+                                  </span>
 
-                                <span className="text-base text-textColor font-semibold">
-                                  Khách
-                                </span>
-
-                                {errors.adults?.message && (
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth={1.5}
-                                    stroke="red"
-                                    className="ml-1 h-6 w-6 flex-shrink-0"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
-                                    />
-                                  </svg>
-                                )}
-                              </div>
-                            </PopoverTrigger>
-                            <PopoverContent>
-                              <div className="p-1 text-textColor text-sm mb-2 bg-[#fedda7]">
-                                <strong className="text-red-500">Lưu ý: </strong>Số lượng vé em bé
-                                sơ sinh không được vượt quá số lượng vé người lớn.
-                              </div>
-                              <div>
-                                <QuantityController
-                                  nameQuantity="Người lớn (12 tuổi trở lên)"
-                                  value={numberAdults}
-                                  onValueInput={handleChangeQuantity("adults")}
-                                  onIncrease={handleChangeQuantity("adults")}
-                                  onDecrease={handleChangeQuantity("adults")}
-                                  register={register} // đăng ký trường dữ liệu để quản lý
-                                  name="adults"
-                                />
-                              </div>
-                              <div className="mt-2">
-                                <QuantityController
-                                  nameQuantity="Trẻ em (Từ 2 - 12 tuổi)"
-                                  value={numberChildren}
-                                  onValueInput={handleChangeQuantity("children")}
-                                  onIncrease={handleChangeQuantity("children")}
-                                  onDecrease={handleChangeQuantity("children")}
-                                  register={register} // đăng ký trường dữ liệu để quản lý
-                                  name="children"
-                                />
-                              </div>
-                              <div className="mt-2">
-                                <QuantityController
-                                  nameQuantity="Em bé (Dưới 2 tuổi)"
-                                  value={numberInfants}
-                                  onValueInput={handleChangeQuantity("infants")}
-                                  onIncrease={handleChangeQuantity("infants")}
-                                  onDecrease={handleChangeQuantity("infants")}
-                                  register={register} // đăng ký trường dữ liệu để quản lý
-                                  name="infants"
-                                />
-                              </div>
-                            </PopoverContent>
-                          </PopoverShadcn>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between gap-2">
-                        {/* hạng vé */}
-                        <div
-                          className={`w-[50%] px-8 py-[10px] border-2 rounded-md relative> ${errors.travelClass?.message ? "border-red-500 bg-red-100" : "border-gray-300"}`}
-                        >
-                          <PopoverShadcn open={open} onOpenChange={setOpen}>
-                            <PopoverTrigger asChild>
-                              <ButtonShadcn
-                                variant="outline"
-                                role="combobox"
-                                aria-expanded={open}
-                                aria-label="TravelClass"
-                                className="w-full flex justify-center bg-transparent border-none shadow-none text-base text-center hover:bg-transparent"
-                              >
-                                {travelClass
-                                  ? travelClassList.find((item) => item.value === travelClass)
-                                      ?.value
-                                  : "Chọn hạng vé"}
-                                {errors.travelClass?.message && (
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth={1.5}
-                                    stroke="red"
-                                    className="ml-1 h-6 w-6 flex-shrink-0"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
-                                    />
-                                  </svg>
-                                )}
-                              </ButtonShadcn>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-[200px] p-0">
-                              <Command>
-                                <CommandList>
-                                  <CommandGroup>
-                                    {travelClassList.map((item, index) => (
-                                      <Controller
-                                        key={index}
-                                        control={control}
-                                        name="travelClass" // tên trường dữ liệu
-                                        render={({ field }) => (
-                                          <CommandItem
-                                            key={item.value}
-                                            value={item.value}
-                                            onSelect={(currentValue) => {
-                                              field.onChange(currentValue) // quản lý và cập nhật trường dữ liệu
-                                              setOpen(false)
-                                              setTravelClass(currentValue)
-                                            }}
-                                          >
-                                            {item.value}
-                                          </CommandItem>
-                                        )}
+                                  {errors.adults?.message && (
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      strokeWidth={1.5}
+                                      stroke="red"
+                                      className="ml-1 h-6 w-6 flex-shrink-0"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
                                       />
-                                    ))}
-                                  </CommandGroup>
-                                </CommandList>
-                              </Command>
-                            </PopoverContent>
-                          </PopoverShadcn>
+                                    </svg>
+                                  )}
+                                </div>
+                              </PopoverTrigger>
+                              <PopoverContent>
+                                <div className="p-1 text-textColor text-sm mb-2 bg-[#fedda7]">
+                                  <strong className="text-red-500">Lưu ý: </strong>Số lượng vé em bé
+                                  sơ sinh không được vượt quá số lượng vé người lớn.
+                                </div>
+                                <div>
+                                  <QuantityController
+                                    nameQuantity="Người lớn (12 tuổi trở lên)"
+                                    value={numberAdults}
+                                    onValueInput={handleChangeQuantity("adults")}
+                                    onIncrease={handleChangeQuantity("adults")}
+                                    onDecrease={handleChangeQuantity("adults")}
+                                    register={register} // đăng ký trường dữ liệu để quản lý
+                                    name="adults"
+                                  />
+                                </div>
+                                <div className="mt-2">
+                                  <QuantityController
+                                    nameQuantity="Trẻ em (Từ 2 - 12 tuổi)"
+                                    value={numberChildren}
+                                    onValueInput={handleChangeQuantity("children")}
+                                    onIncrease={handleChangeQuantity("children")}
+                                    onDecrease={handleChangeQuantity("children")}
+                                    register={register} // đăng ký trường dữ liệu để quản lý
+                                    name="children"
+                                  />
+                                </div>
+                                <div className="mt-2">
+                                  <QuantityController
+                                    nameQuantity="Em bé (Dưới 2 tuổi)"
+                                    value={numberInfants}
+                                    onValueInput={handleChangeQuantity("infants")}
+                                    onIncrease={handleChangeQuantity("infants")}
+                                    onDecrease={handleChangeQuantity("infants")}
+                                    register={register} // đăng ký trường dữ liệu để quản lý
+                                    name="infants"
+                                  />
+                                </div>
+                              </PopoverContent>
+                            </PopoverShadcn>
+                          </div>
                         </div>
+                      </div>
 
-                        <Button
-                          // disable={flightOffersSearchMutation.isPending}
-                          classNameWrapper="w-[50%] relative"
-                          type="submit"
-                          nameButton="Tìm kiếm"
-                          className="px-8 py-4 border-2 border-blueColor bg-blueColor w-full text-whiteColor text-base rounded-md hover:border-2 hover:bg-blueColor/80 duration-200 font-semibold"
-                        />
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between gap-2">
+                          {/* hạng vé */}
+                          <div
+                            className={`w-[50%] px-8 py-[10px] border-2 rounded-md relative> ${errors.travelClass?.message ? "border-red-500 bg-red-100" : "border-gray-300"}`}
+                          >
+                            <PopoverShadcn open={open} onOpenChange={setOpen}>
+                              <PopoverTrigger asChild>
+                                <ButtonShadcn
+                                  variant="outline"
+                                  role="combobox"
+                                  aria-expanded={open}
+                                  aria-label="TravelClass"
+                                  className="w-full flex justify-center bg-transparent border-none shadow-none text-base text-center hover:bg-transparent"
+                                >
+                                  {travelClass
+                                    ? travelClassList.find((item) => item.value === travelClass)
+                                        ?.value
+                                    : "Chọn hạng vé"}
+                                  {errors.travelClass?.message && (
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      strokeWidth={1.5}
+                                      stroke="red"
+                                      className="ml-1 h-6 w-6 flex-shrink-0"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
+                                      />
+                                    </svg>
+                                  )}
+                                </ButtonShadcn>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-[200px] p-0">
+                                <Command>
+                                  <CommandList>
+                                    <CommandGroup>
+                                      {travelClassList.map((item, index) => (
+                                        <Controller
+                                          key={index}
+                                          control={control}
+                                          name="travelClass" // tên trường dữ liệu
+                                          render={({ field }) => (
+                                            <CommandItem
+                                              key={item.value}
+                                              value={item.value}
+                                              onSelect={(currentValue) => {
+                                                field.onChange(currentValue) // quản lý và cập nhật trường dữ liệu
+                                                setOpen(false)
+                                                setTravelClass(currentValue)
+                                              }}
+                                            >
+                                              {item.value}
+                                            </CommandItem>
+                                          )}
+                                        />
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </PopoverShadcn>
+                          </div>
+
+                          <Button
+                            // disable={flightOffersSearchMutation.isPending}
+                            classNameWrapper="w-[50%] relative"
+                            type="submit"
+                            nameButton="Tìm kiếm"
+                            className="px-8 py-4 border-2 border-blueColor bg-blueColor w-full text-whiteColor text-base rounded-md hover:border-2 hover:bg-blueColor/80 duration-200 font-semibold"
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </form>
+                  </form>
+                </div>
               </div>
             </div>
           </div>

@@ -74,7 +74,7 @@ const InputSearch = forwardRef<HTMLDivElement, InputProps>(function InputProps(
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="red"
-                className="h-6 w-6 flex-shrink-0"
+                className="h-5 w-5 flex-shrink-0"
               >
                 <path
                   strokeLinecap="round"

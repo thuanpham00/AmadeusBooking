@@ -129,6 +129,11 @@ export const airportCodes: AirportCodeItem[] = [
 
   { code: "TPE", airport: "Sân bay Quốc tế Đào Viên Đài Loan", country: "Đài Loan" },
   {
+    code: "TSA",
+    airport: "Sân bay Đài Bắc Tùng Sơn",
+    country: "Đài Loan"
+  },
+  {
     code: "DXB",
     airport: "Sân bay Quốc tế Dubai",
     country: "Các Tiểu vương quốc Ả Rập Thống nhất"
