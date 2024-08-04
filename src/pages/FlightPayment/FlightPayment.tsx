@@ -54,7 +54,7 @@ export default function FlightPayment() {
         language: "vn" // ngôn ngữ
       })
 
-      window.location.href = response.request.responseURL
+      window.location.href = response.data.url
     } catch (error) {
       console.error("Error creating payment URL:", error)
     }
