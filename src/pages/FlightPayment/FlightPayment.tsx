@@ -24,11 +24,12 @@ export default function FlightPayment() {
   const priceChild = usePriceTraveller(data, "CHILD")
   const priceInfant = usePriceTraveller(data, "HELD_INFANT")
   const priceTotal = useMemo(() => {
-    return data.data.flightOffers[0].travelerPricings.reduce(
+    return data?.data.flightOffers[0].travelerPricings.reduce(
       (result, current) => result + Number(current.price.total),
       0
     )
   }, [data])
+
   const quantityOfTraveller = useMemo(() => {
     const count = { adult: 0, child: 0, infant: 0 }
     if (data) {
@@ -48,13 +49,15 @@ export default function FlightPayment() {
   const handleSubmitPayment = async () => {
     try {
       const response = await axios.post("http://localhost:3000/create_payment_url", {
-        amount: 100000, // số tiền
+        amount: data.data.flightOffers[0].price.total, // số tiền
         orderDescription: "Thanh toán đơn hàng", // mô tả đơn hàng
         orderType: "billpayment", // loại đơn hàng
         language: "vn" // ngôn ngữ
       })
 
       window.location.href = response.data.url
+      localStorage.removeItem("detailPayment")
+      localStorage.removeItem("flightPriceData")
     } catch (error) {
       console.error("Error creating payment URL:", error)
     }
@@ -73,7 +76,7 @@ export default function FlightPayment() {
         >
           <div className="container">
             <div className="py-4 px-1 grid grid-cols-12 items-center">
-              <div className="col-span-4">
+              <div className="col-span-12 md:col-span-5">
                 <div className="flex items-center gap-2">
                   <button aria-label="iconBack" onClick={handleBackPage}>
                     <svg
@@ -91,12 +94,10 @@ export default function FlightPayment() {
                       />
                     </svg>
                   </button>
-                  <h1 className="text-xl text-whiteColor font-semibold">
-                    Hoàn tất đặt chỗ của bạn
-                  </h1>
+                  <h1 className="text-xl text-whiteColor font-semibold">Hoàn tất đặt vé của bạn</h1>
                 </div>
               </div>
-              <div className="col-span-5 col-start-8 items-center flex flex-col">
+              <div className="hidden col-span-7 items-center md:flex flex-col">
                 <div className="w-[80%] flex items-center justify-between">
                   <div>
                     <div className="w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs">
@@ -143,10 +144,10 @@ export default function FlightPayment() {
           </div>
         </div>
 
-        <div className="w-full absolute md:top-46 lg:top-20 left-1/2 -translate-x-1/2">
+        <div className="w-full absolute top-20 md:top-24 lg:top-20 left-1/2 -translate-x-1/2">
           <div className="container">
             <div className="grid grid-cols-12 gap-4">
-              <div className="col-span-8">
+              <div className="col-span-12 order-2 md:col-span-8 md:order-1">
                 <div className="p-4 bg-[#fff] shadow-md rounded-md">
                   <span className="text-sm text-textColor font-medium">Chi tiết liên lạc</span>
                   <div className="mt-2 flex items-start gap-2">
@@ -166,14 +167,14 @@ export default function FlightPayment() {
                     </svg>
                     <div>
                       <span className="text-base font-medium">
-                        {data.data.contacts[0].addresseeName.firstName}
+                        {data?.data.contacts[0].addresseeName.firstName}
                       </span>
                       <span className="block text-sm font-normal text-gray-500">
-                        {data.data.contacts[0].emailAddress}
+                        {data?.data.contacts[0].emailAddress}
                       </span>
                       <span className="block text-sm font-normal text-gray-500">
-                        +{data.data.contacts[0].phones[0].countryCallingCode}{" "}
-                        {data.data.contacts[0].phones[0].number}
+                        +{data?.data.contacts[0].phones[0].countryCallingCode}{" "}
+                        {data?.data.contacts[0].phones[0].number}
                       </span>
                     </div>
                   </div>
@@ -182,7 +183,7 @@ export default function FlightPayment() {
                     Thông tin hành khách
                   </span>
                   <div className="mt-2">
-                    {data.data.travelers.map((traveller, index) => (
+                    {data?.data.travelers.map((traveller, index) => (
                       <div key={index} className="mb-1 flex items-start gap-2">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -243,7 +244,7 @@ export default function FlightPayment() {
                 </div>
 
                 <div className="mt-4 flex items-center justify-between">
-                  <div className="text-sm max-w-[650px] w-full">
+                  <div className="text-sm w-[250px] md:w-[300px] lg:w-[500px]">
                     Bằng cách bấm vào nút nộp đơn đặt chỗ này, tôi đồng ý với{" "}
                     <span className="text-blueColor font-medium">Điều Khoản sử dụng</span> và{" "}
                     <span className="text-blueColor font-medium">Chính Sách Bảo Mật</span> của
@@ -251,8 +252,8 @@ export default function FlightPayment() {
                   </div>
                   <Button
                     onClick={handleSubmitPayment}
-                    nameButton="Thanh toán ngay"
-                    className="p-4 bg-blueColor w-full text-whiteColor text-base rounded-sm hover:bg-blueColor/80 duration-200 flex items-center justify-center"
+                    nameButton="Thanh toán"
+                    className="px-4 py-4 rounded-md bg-blueColor w-full text-whiteColor text-base hover:bg-blueColor/80 duration-200 flex items-center justify-center"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -260,7 +261,7 @@ export default function FlightPayment() {
                       viewBox="0 0 24 24"
                       strokeWidth={1.5}
                       stroke="currentColor"
-                      className="w-4 h-4"
+                      className="ml-1 w-4 h-4"
                     >
                       <path
                         strokeLinecap="round"
@@ -272,12 +273,12 @@ export default function FlightPayment() {
                 </div>
               </div>
 
-              <div className="col-span-4">
+              <div className="col-span-12 order-1 md:col-span-4 md:order-2">
                 <div className="sticky left-0 top-20 ">
                   <div className="bg-[#fff] p-4 shadow-md rounded-lg">
                     <span className="text-base mb-4 block font-medium">Phân tích giá</span>
 
-                    {data.data.flightOffers[0].travelerPricings.find(
+                    {data?.data.flightOffers[0].travelerPricings.find(
                       (item) => item.travelerType === "ADULT"
                     ) && (
                       <div>
@@ -309,7 +310,7 @@ export default function FlightPayment() {
                       </div>
                     )}
 
-                    {data.data.flightOffers[0].travelerPricings.find(
+                    {data?.data.flightOffers[0].travelerPricings.find(
                       (item) => item.travelerType === "CHILD"
                     ) && (
                       <div className="mt-2">
@@ -341,7 +342,7 @@ export default function FlightPayment() {
                       </div>
                     )}
 
-                    {data.data.flightOffers[0].travelerPricings.find(
+                    {data?.data.flightOffers[0].travelerPricings.find(
                       (item) => item.travelerType === "HELD_INFANT"
                     ) && (
                       <div className="mt-2">
@@ -400,13 +401,13 @@ export default function FlightPayment() {
                           <img src={icon2} alt="icon" className="w-5 h-5" />
                           <h3 className="text-sm text-textColor font-semibold">
                             {
-                              data.data.flightOffers[0].itineraries[0].segments[0].departure
+                              data?.data.flightOffers[0].itineraries[0].segments[0].departure
                                 .iataCode
                             }
                             {"-"}
                             {
-                              data.data.flightOffers[0].itineraries[0].segments[
-                                data.data.flightOffers[0].itineraries[0].segments.length - 1
+                              data?.data.flightOffers[0].itineraries[0].segments[
+                                data?.data.flightOffers[0].itineraries[0].segments.length - 1
                               ].arrival.iataCode
                             }
                             : Yêu cầu Visa quá cảnh
@@ -426,16 +427,16 @@ export default function FlightPayment() {
                           <img src={icon2} alt="icon" className="w-5 h-5" />
                           <h3 className="text-sm text-textColor font-semibold">
                             {
-                              data.data.flightOffers[0].itineraries[
-                                data.data.flightOffers[0].itineraries.length - 1
+                              data?.data.flightOffers[0].itineraries[
+                                data?.data.flightOffers[0].itineraries.length - 1
                               ].segments[0].departure.iataCode
                             }
                             {"-"}
                             {
-                              data.data.flightOffers[0].itineraries[
-                                data.data.flightOffers[0].itineraries.length - 1
+                              data?.data.flightOffers[0].itineraries[
+                                data?.data.flightOffers[0].itineraries.length - 1
                               ].segments[
-                                data.data.flightOffers[0].itineraries[0].segments.length - 1
+                                data?.data.flightOffers[0].itineraries[0].segments.length - 1
                               ].arrival.iataCode
                             }
                             : Yêu cầu Visa quá cảnh

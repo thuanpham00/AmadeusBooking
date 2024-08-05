@@ -174,65 +174,70 @@ export default function FlightOrder() {
   })
 
   const onSubmit = handleSubmit((dataForm) => {
-    const loadingToastId = toast.loading("Vui lòng chờ trong giây lát")
-    const createOrder: FlightCreateOrder = {
-      data: {
-        type: "flight-order",
-        flightOffers: [data.data.flightOffers[0]],
-        travelers: travellers.map((item, index) => ({ ...item, id: index + 1 })),
-        remarks: {
-          // ghi chú
-          general: [
+    if (travellers.length === 0) {
+      toast.error("Vui lòng điền đầy đủ thông tin")
+    } else {
+      const loadingToastId = toast.loading("Vui lòng chờ trong giây lát!!!")
+      const createOrder: FlightCreateOrder = {
+        data: {
+          type: "flight-order",
+          flightOffers: [data.data.flightOffers[0]],
+          travelers: travellers.map((item, index) => ({ ...item, id: index + 1 })),
+          remarks: {
+            // ghi chú
+            general: [
+              {
+                subType: "GENERAL_MISCELLANEOUS",
+                text: "ONLINE BOOKING FROM INCREIBLE VIAJES"
+              }
+            ]
+          },
+          ticketingAgreement: {
+            // tùy chọn của thỏa thuận vé và thời gian trì hoãn
+            option: "DELAY_TO_CANCEL",
+            delay: "6D"
+          },
+          // Thông tin liên hệ:
+          contacts: [
             {
-              subType: "GENERAL_MISCELLANEOUS",
-              text: "ONLINE BOOKING FROM INCREIBLE VIAJES"
+              addresseeName: {
+                firstName: dataForm.userName2,
+                lastName: dataForm.lastName2
+              },
+              companyName: "INCREIBLE VIAJES",
+              purpose: "STANDARD",
+              phones: [
+                {
+                  deviceType: "MOBILE",
+                  countryCallingCode: dataForm.codeNumber,
+                  number: dataForm.numberPhone
+                }
+              ],
+              emailAddress: dataForm.email,
+              address: {
+                lines: ["Calle Prado, 16"],
+                postalCode: "28014",
+                cityName: "HCM",
+                countryCode: "VN"
+              }
             }
           ]
-        },
-        ticketingAgreement: {
-          // tùy chọn của thỏa thuận vé và thời gian trì hoãn
-          option: "DELAY_TO_CANCEL",
-          delay: "6D"
-        },
-        // Thông tin liên hệ:
-        contacts: [
-          {
-            addresseeName: {
-              firstName: dataForm.userName2,
-              lastName: dataForm.lastName2
-            },
-            companyName: "INCREIBLE VIAJES",
-            purpose: "STANDARD",
-            phones: [
-              {
-                deviceType: "MOBILE",
-                countryCallingCode: dataForm.codeNumber,
-                number: dataForm.numberPhone
-              }
-            ],
-            emailAddress: dataForm.email,
-            address: {
-              lines: ["Calle Prado, 16"],
-              postalCode: "28014",
-              cityName: "HCM",
-              countryCode: "VN"
-            }
-          }
-        ]
+        }
       }
+      flightCreateOrderMutation.mutate(createOrder, {
+        onSuccess: () => {
+          toast.dismiss(loadingToastId)
+          toast.success("Lưu thông tin thành công!")
+          navigate(path.flightPayment)
+        }
+      })
     }
-    flightCreateOrderMutation.mutate(createOrder, {
-      onSuccess: () => {
-        toast.dismiss(loadingToastId)
-        toast.success("Lưu thông tin thành công")
-        navigate(path.flightPayment)
-      }
-    })
   })
 
   useEffect(() => {
     if (flightCreateOrderMutation.data?.data) {
       localStorage.setItem("detailPayment", JSON.stringify(flightCreateOrderMutation.data.data))
+      console.log(flightCreateOrderMutation.data.data)
     }
   }, [flightCreateOrderMutation.data?.data])
 
@@ -249,7 +254,7 @@ export default function FlightOrder() {
         >
           <div className="container">
             <div className="py-4 px-1 grid grid-cols-12 items-center">
-              <div className="col-span-4">
+              <div className="col-span-12 md:col-span-5">
                 <div className="flex items-center gap-2">
                   <button aria-label="iconBack" onClick={handleBackPage}>
                     <svg
@@ -267,12 +272,10 @@ export default function FlightOrder() {
                       />
                     </svg>
                   </button>
-                  <h1 className="text-xl text-whiteColor font-semibold">
-                    Hoàn tất đặt chỗ của bạn
-                  </h1>
+                  <h1 className="text-xl text-whiteColor font-semibold">Hoàn tất đặt vé của bạn</h1>
                 </div>
               </div>
-              <div className="col-span-5 col-start-8 items-center flex flex-col">
+              <div className="hidden col-span-7 items-center md:flex flex-col">
                 <div className="w-[80%] flex items-center justify-between">
                   <div>
                     <div className="w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs">
@@ -280,7 +283,7 @@ export default function FlightOrder() {
                     </div>
                   </div>
 
-                  <div className="w-52 h-1 bg-gray-400"></div>
+                  <div className="w-60 h-1 bg-gray-400"></div>
 
                   <div>
                     <div className="w-5 h-5 rounded-full bg-gray-400 text-white flex items-center justify-center text-xs">
@@ -288,7 +291,7 @@ export default function FlightOrder() {
                     </div>
                   </div>
 
-                  <div className="w-52 h-1 bg-gray-400"></div>
+                  <div className="w-60 h-1 bg-gray-400"></div>
 
                   <div>
                     <div className="w-5 h-5 rounded-full bg-gray-400 text-white flex items-center justify-center text-xs">
@@ -319,19 +322,19 @@ export default function FlightOrder() {
           </div>
         </div>
 
-        <div className="w-full absolute md:top-46 lg:top-20 left-1/2 -translate-x-1/2">
+        <div className="w-full absolute top-20 left-1/2 -translate-x-1/2">
           <div className="container">
             <div className="grid grid-cols-12 gap-4">
-              <div className="col-span-8">
+              <div className="col-span-12 order-2 md:col-span-8 md:order-1">
                 <div className="p-4 bg-[#fff] shadow-md rounded-xl">
                   {data.data.flightOffers[0].itineraries.map((item, index) => (
                     <div
                       key={index}
                       className="relative p-4 mb-4 last:mb-0 rounded-sm border border-gray-300 shadow"
                     >
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between flex-wrap">
                         <div className="flex items-center gap-1">
-                          <h2 className="text-xl text-textColor font-semibold">
+                          <h2 className="text-base md:text-xl text-textColor font-semibold">
                             {item.segments[0].departure.iataCode},{" "}
                             {getCountry(
                               countries,
@@ -355,7 +358,7 @@ export default function FlightOrder() {
                               />
                             </svg>
                           </div>
-                          <h2 className="text-xl text-textColor font-semibold">
+                          <h2 className="text-base md:text-xl text-textColor font-semibold">
                             {item.segments[item.segments.length - 1].arrival.iataCode},{" "}
                             {getCountry(
                               countries,
@@ -444,43 +447,47 @@ export default function FlightOrder() {
                             </div>
                           </div>
 
-                          <div className="relative mt-2 p-4 bg-[#f4f4f4]">
-                            <div className="flex items-center gap-4">
-                              <span className="text-base font-medium">
-                                {getHourFromAPI(detail.departure.at)}
-                              </span>
-                              <div className="border border-gray-500 bg-white w-3 h-3 rounded-full"></div>
-                              <div className="text-base font-medium">
-                                {detail.departure.iataCode}
-                                {" - "}
-                                {getCountry(
-                                  countries,
-                                  data.dictionaries.locations[detail.departure.iataCode].countryCode
-                                )}
-                                , Nhà ga khởi hành: {detail.departure.terminal}
+                          <div className="relative mt-2 p-2 md:p-4 bg-[#f4f4f4]">
+                            <div className="flex items-center pb-4 md:pb-2 gap-4">
+                              <div className="h-[100px] md:h-[80px] flex flex-col justify-between">
+                                <span className="block text-base font-medium">
+                                  {getHourFromAPI(detail.departure.at)}
+                                </span>
+
+                                <span className="block text-base font-medium">
+                                  {getHourFromAPI(detail.arrival.at)}
+                                </span>
                               </div>
-                            </div>
 
-                            <div className="absolute left-[10%] flex items-center">
-                              <div className="w-[2px] h-8 bg-gray-500"></div>
-                              <span className="ml-6 w-[100px] text-sm">
-                                {getDurationFromAPI(detail.duration)}
-                              </span>
-                            </div>
+                              <div className="relative h-[80px] md:h-[60px] flex flex-col justify-between">
+                                <div className="border border-gray-500 bg-white w-3 h-3 rounded-full"></div>
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[2px] h-8 bg-gray-500"></div>
+                                <div className="border border-gray-500 bg-white w-3 h-3 rounded-full"></div>
+                              </div>
 
-                            <div className="mt-8 flex items-center gap-4 mb-4">
-                              <span className="text-base font-medium">
-                                {getHourFromAPI(detail.arrival.at)}
-                              </span>
-                              <div className="border border-gray-500 bg-white w-3 h-3 rounded-full"></div>
-                              <div className="text-base font-medium">
-                                {detail.arrival.iataCode}
-                                {" - "}
-                                {getCountry(
-                                  countries,
-                                  data.dictionaries.locations[detail.arrival.iataCode].countryCode
-                                )}
-                                , Nhà ga khởi hành: {detail.arrival.terminal}
+                              <div className="h-[100px] md:h-[80px] flex flex-col justify-between">
+                                <div className="text-base font-medium">
+                                  {detail.departure.iataCode}
+                                  {" - "}
+                                  {getCountry(
+                                    countries,
+                                    data.dictionaries.locations[detail.departure.iataCode]
+                                      .countryCode
+                                  )}
+                                  , Nhà ga khởi hành: {detail.departure.terminal}
+                                </div>
+                                <span className="text-sm">
+                                  {getDurationFromAPI(detail.duration)}
+                                </span>
+                                <div className="text-base font-medium">
+                                  {detail.arrival.iataCode}
+                                  {" - "}
+                                  {getCountry(
+                                    countries,
+                                    data.dictionaries.locations[detail.arrival.iataCode].countryCode
+                                  )}
+                                  , Nhà ga khởi hành: {detail.arrival.terminal}
+                                </div>
                               </div>
                             </div>
 
@@ -785,22 +792,7 @@ export default function FlightOrder() {
                         </span>
                       </div>
                       <div className="p-4 grid grid-cols-6 items-center gap-2 flex-wrap">
-                        <div className="col-span-3">
-                          <span className="mb-[2px] text-sm block">
-                            Họ (vd: Pham) <span className="text-red-500">*</span>
-                          </span>
-                          <Input
-                            className="flex flex-col items-start"
-                            classNameInput="w-full p-2 outline-none bg-transparent border font-normal focus:border-blueColor bg-white rounded border border-gray-400 text-base"
-                            type="text"
-                            autoComplete="off"
-                            placeholder="Họ"
-                            name="lastName2"
-                            register={register}
-                            messageError={errors.lastName2?.message}
-                          />
-                        </div>
-                        <div className="col-span-3">
+                        <div className="col-span-6 md:col-span-3">
                           <span className="mb-[2px] text-sm block">
                             Tên Đệm & Tên (vd: Minh Thuan) <span className="text-red-500">*</span>
                           </span>
@@ -808,18 +800,33 @@ export default function FlightOrder() {
                             className="flex flex-col items-start"
                             classNameInput="w-full p-2 outline-none bg-transparent border font-normal focus:border-blueColor bg-white rounded border border-gray-400 text-base"
                             type="text"
-                            autoComplete="off"
+                            autoComplete="on"
                             placeholder="Tên"
                             name="userName2"
                             register={register}
                             messageError={errors.userName2?.message}
                           />
                         </div>
-                        <div className="col-span-3 flex">
+                        <div className="col-span-6 md:col-span-3">
+                          <span className="mb-[2px] text-sm block">
+                            Họ (vd: Pham) <span className="text-red-500">*</span>
+                          </span>
+                          <Input
+                            className="flex flex-col items-start"
+                            classNameInput="w-full p-2 outline-none bg-transparent border font-normal focus:border-blueColor bg-white rounded border border-gray-400 text-base"
+                            type="text"
+                            autoComplete="on"
+                            placeholder="Họ"
+                            name="lastName2"
+                            register={register}
+                            messageError={errors.lastName2?.message}
+                          />
+                        </div>
+                        <div className="col-span-6 md:col-span-3 flex">
                           <div className="w-[40%]">
                             <span className="mb-[2px] text-sm block">Mã quốc gia</span>
                             <InputSearchV2
-                              autoComplete="off"
+                              autoComplete="on"
                               placeholder="+84"
                               classNameList="z-20 absolute top-10 left-0 h-[200px] bg-whiteColor overflow-y-auto overflow-x-hidden rounded-sm shadow-sm transition-all duration-1000 ease-linear"
                               classNameBlock="relative flex items-center"
@@ -844,9 +851,9 @@ export default function FlightOrder() {
                             <span className="mb-[2px] text-sm block">Số điện thoại</span>
                             <Input
                               className="flex flex-col items-start"
-                              classNameInput="w-full p-2 outline-none bg-transparent border font-normal focus:border-blueColor bg-white rounded-tr rounded-br border text-base border-gray-400 border-l-0"
+                              classNameInput="w-full p-2 outline-none bg-transparent border font-normal focus:border-blueColor bg-white rounded-tr rounded-br border text-base border-gray-400"
                               type="text"
-                              autoComplete="off"
+                              autoComplete="on"
                               placeholder="Số điện thoại"
                               name="numberPhone"
                               register={register}
@@ -854,13 +861,13 @@ export default function FlightOrder() {
                             />
                           </div>
                         </div>
-                        <div className="col-span-3">
+                        <div className="col-span-6 md:col-span-3">
                           <span className="mb-[2px] text-sm block">Email</span>
                           <Input
                             className="flex flex-col items-start"
                             classNameInput="w-full p-2 outline-none bg-transparent border font-normal focus:border-blueColor bg-white rounded border border-gray-400 text-base"
                             type="text"
-                            autoComplete="off"
+                            autoComplete="on"
                             placeholder="Email"
                             name="email"
                             register={register}
@@ -884,7 +891,7 @@ export default function FlightOrder() {
                 </div>
               </div>
 
-              <div className="col-span-4">
+              <div className="col-span-12 order-1 md:col-span-4 md:order-2">
                 <div className="sticky left-0 top-20 ">
                   <div className="bg-[#fff] p-4 shadow-md rounded-lg">
                     <span className="text-base mb-4 block font-medium">Phân tích giá</span>

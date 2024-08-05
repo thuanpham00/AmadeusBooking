@@ -145,8 +145,8 @@ export default function FormProfile({ addOnTraveller }: Props) {
         <strong>Xin hãy cẩn thận:</strong> Thông tin hành khách phải trùng khớp với hộ chiếu hoặc
         giấy tờ tùy thân có ảnh của quý khách
       </span>
-      <div className="mt-2 grid grid-cols-6 items-center gap-x-8 gap-y-4 flex-wrap">
-        <div className="col-span-6">
+      <div className="mt-2 grid grid-cols-6 items-center gap-x-4 gap-y-4 flex-wrap">
+        <div className="col-span-6 md:col-span-6">
           <span className="mb-[2px] text-sm block">Giới tính</span>
           <div className="flex items-start">
             <div
@@ -167,8 +167,8 @@ export default function FormProfile({ addOnTraveller }: Props) {
             </div>
           </div>
         </div>
-        <div className="col-span-3">
-          <span className="mb-[2px] text-sm block">Tên đệm và Tên (vd: MINH THUAN)</span>
+        <div className="col-span-6 md:col-span-3">
+          <span className="mb-[2px] text-sm block truncate">Tên đệm và Tên (vd: MINH THUAN)</span>
           <Input
             className="flex flex-col items-start"
             classNameInput="w-full p-2 outline-none bg-transparent border font-normal focus:border-blueColor bg-white rounded border border-gray-400"
@@ -181,7 +181,7 @@ export default function FormProfile({ addOnTraveller }: Props) {
             onChange={handleChangeValueForm("userName")}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-6 md:col-span-3">
           <span className="mb-[2px] text-sm block">Họ (vd: PHAM)</span>
           <Input
             className="flex flex-col items-start"
@@ -195,7 +195,7 @@ export default function FormProfile({ addOnTraveller }: Props) {
             onChange={handleChangeValueForm("lastName")}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-6 md:col-span-3">
           <span className="mb-[2px] text-sm block">Ngày sinh (YYYY/MM/dd)</span>
           <div className="flex items-center flex-wrap">
             <Input
@@ -233,7 +233,7 @@ export default function FormProfile({ addOnTraveller }: Props) {
             />
           </div>
         </div>
-        <div className="col-span-3">
+        <div className="col-span-6 md:col-span-3">
           <span className="mb-[2px] text-sm block">Quốc tịch</span>
           <InputSearchV2
             autoComplete="on"

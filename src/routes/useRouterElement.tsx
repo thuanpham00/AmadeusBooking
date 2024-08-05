@@ -20,6 +20,7 @@ const Flight = lazy(() => import("src/pages/Flight"))
 const FlightSearch = lazy(() => import("src/pages/FlightSearch"))
 const FlightOrder = lazy(() => import("src/pages/FlightOrder"))
 const FlightPayment = lazy(() => import("src/pages/FlightPayment"))
+const PaymentComplete = lazy(() => import("src/pages/Payment"))
 
 function ProtectedRouter() {
   const { isAuthenticated } = useContext(AppContext)
@@ -88,6 +89,14 @@ export default function useRouterElement() {
               element: (
                 <Suspense>
                   <FlightPayment />
+                </Suspense>
+              )
+            },
+            {
+              path: path.paymentComplete,
+              element: (
+                <Suspense>
+                  <PaymentComplete />
                 </Suspense>
               )
             }

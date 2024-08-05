@@ -136,12 +136,12 @@ export const airportCodes: AirportCodeItem[] = [
   {
     code: "DXB",
     airport: "Sân bay Quốc tế Dubai",
-    country: "Các Tiểu vương quốc Ả Rập Thống nhất"
+    country: "Ả Rập"
   },
   {
     code: "AUH",
     airport: "Sân bay Quốc tế Abu Dhabi",
-    country: "Các Tiểu vương quốc Ả Rập Thống nhất"
+    country: "Ả Rập"
   },
 
   { code: "LHR", airport: "Sân bay Heathrow", country: "Anh" },

@@ -52,7 +52,7 @@ const InputSearch = forwardRef<HTMLDivElement, InputProps>(function InputProps(
 ) {
   const registerResult = register && name ? { ...register(name) } : ""
   return (
-    <div className="w-[50%] relative">
+    <div className="col-span-4 md:col-span-2 relative">
       <div className={error ? classNameError : classNameBlock}>
         {children}
         <div className="w-full flex flex-col">

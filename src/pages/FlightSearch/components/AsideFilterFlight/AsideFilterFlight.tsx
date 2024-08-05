@@ -132,7 +132,7 @@ export default function AsideFilterFlight({ queryConfig }: Props) {
       </div>
 
       <div className="py-4">
-        <div className="text-lg text-textColor font-semibold">Chọn hãng hàng không</div>
+        <div className="text-left text-lg text-textColor font-semibold">Chọn hãng hàng không</div>
         <div className="mt-2 flex items-center gap-2">
           <input
             type="checkbox"
@@ -219,7 +219,7 @@ export default function AsideFilterFlight({ queryConfig }: Props) {
       </div>
 
       <div className="py-4">
-        <div className="text-lg text-textColor font-semibold">Giá chuyến bay</div>
+        <div className="text-left text-lg text-textColor font-semibold">Giá chuyến bay</div>
         <div className="mt-4 flex items-center gap-2">
           <div className="w-full relative">
             <input

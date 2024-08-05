@@ -94,7 +94,7 @@ export default function FlightItem({ item, list }: Props) {
                 key={flight.id}
                 className="grid grid-cols-12 items-center p-4 pt-10 border-b border-b-gray-200"
               >
-                <div className="col-span-3 relative">
+                <div className="hidden md:block col-span-3 relative">
                   <div className="absolute -top-8 left-0 bg-gray-200 rounded-full p-1 text-xs flex items-center justify-center gap-[2px]">
                     <img src={iconFlight2} alt="icon" className="w-5 h-5" />
                     <span>{item.travelerPricings[0].fareDetailsBySegment[0].cabin}</span>
@@ -114,9 +114,9 @@ export default function FlightItem({ item, list }: Props) {
                   </div>
                 </div>
 
-                <div className="col-span-2">
+                <div className="col-span-4 md:col-span-2">
                   <div className="flex flex-col items-center">
-                    <div className="text-2xl font-semibold text-textColor">
+                    <div className="text-base lg:text-2xl font-semibold text-textColor">
                       {getHourFromAPI(flight.departure.at)}
                     </div>
                     <div className="text-sm text-textColor">
@@ -125,7 +125,7 @@ export default function FlightItem({ item, list }: Props) {
                   </div>
                 </div>
 
-                <div className="col-span-2 relative">
+                <div className="col-span-4 md:col-span-2 relative">
                   <div className="text-center text-sm font-medium">
                     {getDurationFromAPI(flight.duration) as string}
                   </div>
@@ -137,9 +137,9 @@ export default function FlightItem({ item, list }: Props) {
                   </div>
                 </div>
 
-                <div className="col-span-2">
+                <div className="col-span-4 md:col-span-2">
                   <div className="flex flex-col items-center">
-                    <div className="text-2xl font-semibold text-textColor">
+                    <div className="text-base lg:text-2xl font-semibold text-textColor">
                       {getHourFromAPI(flight.arrival.at)}
                     </div>
                     <div className="text-sm text-textColor">
@@ -148,7 +148,7 @@ export default function FlightItem({ item, list }: Props) {
                   </div>
                 </div>
 
-                <div className="col-span-3">
+                <div className="hidden md:block col-span-3">
                   <div className="flex items-start justify-center gap-2">
                     <img src={luggage} alt="luggage" className="mt-1 h-3 w-3" />
 
@@ -181,11 +181,11 @@ export default function FlightItem({ item, list }: Props) {
               onClick={handleDetailFlight}
               className="text-blueColor text-sm hover:underline hover:text-blueColor/80 duration-200"
             >
-              {showFlightDetail ? "Ẩn" : "Chi tiết chuyến bay"}
+              {showFlightDetail ? "Ẩn" : "Chi tiết"}
             </button>
             <div className="flex gap-2 items-center">
               <div className="flex flex-col items-end">
-                <span className="text-lg font-semibold">
+                <span className="text-base lg:text-lg font-semibold">
                   {exchangePrice(item.travelerPricings[0].price.total)}đ
                 </span>
                 <span className="text-gray-500 text-sm">Giá vé dành cho người lớn</span>
@@ -199,11 +199,11 @@ export default function FlightItem({ item, list }: Props) {
                     className="px-3 py-2 bg-[#e5eef4] w-full text-blueColor text-sm rounded-full hover:bg-blueColor duration-200 font-semibold border border-blueColor hover:text-whiteColor"
                   />
                 </AlertDialogTrigger>
-                <AlertDialogContent className="block">
+                <AlertDialogContent className="block max-w-[400px] md:max-w-[700px] lg:max-w-[1000px] h-[700px] md:h-[550px] overflow-y-auto">
                   <AlertDialogTitle className="flex items-center justify-between gap-2 shadow-md px-6 py-2">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 text-sm md:text-base">
                       CÓ NHIỀU LỰA CHỌN GIÁ CẢ HƠN cho chuyến đi của bạn.
-                      <img src={icon2} alt="icon2" className="w-32 h-7" />
+                      <img src={icon2} alt="icon2" className="hidden md:block w-32 h-7" />
                     </div>
                     <AlertDialogCancel className="border-none shadow-none p-0">
                       <svg
@@ -234,8 +234,8 @@ export default function FlightItem({ item, list }: Props) {
 
                   {showPriceDetail && (
                     <Fragment>
-                      <div className="px-6 py-2 flex items-start gap-2">
-                        <div className="mt-[2px] text-base font-medium">
+                      <div className="px-6 py-2 flex items-start flex-wrap gap-2">
+                        <div className="md:mt-[2px] text-base font-medium">
                           {flightPrice?.data.flightOffers[0].itineraries.length === 1
                             ? "One way"
                             : "Round Trip"}
@@ -243,7 +243,7 @@ export default function FlightItem({ item, list }: Props) {
                         <div>
                           {flightPrice?.data.flightOffers[0].itineraries.map(
                             (detailPrice, index) => (
-                              <div key={index} className="flex items-center gap-2">
+                              <div key={index} className="flex items-center flex-wrap gap-2">
                                 <div className="text-base font-semibold">
                                   {getCountry(
                                     airportCodes,
@@ -294,10 +294,13 @@ export default function FlightItem({ item, list }: Props) {
                       <div className="px-6 grid grid-cols-3 gap-4 items-center overflow-y-auto">
                         {flightPrice?.data.flightOffers[0].travelerPricings.map(
                           (traveler, index) => (
-                            <div key={index} className="col-span-1 border-2 border-gray-300">
+                            <div
+                              key={index}
+                              className="col-span-3 lg:col-span-1 border-2 border-gray-300"
+                            >
                               <div className="flex items-center p-4 gap-2 border-b border-b-gray-300">
                                 <div>
-                                  <div className="flex items-center gap-1">
+                                  <div className="flex lg:items-center lg:flex-row flex-col items-start lg:gap-1">
                                     <span className="text-base font-medium">
                                       {exchangePrice(traveler.price.total)}đ
                                     </span>
@@ -458,7 +461,7 @@ export default function FlightItem({ item, list }: Props) {
                       </div>
 
                       <AlertDialogFooter className="mt-4 py-2 px-6 border-t border-t-gray-300">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center justify-end gap-2">
                           <Button
                             onClick={handleNavigatePage}
                             nameButton="Thêm vào giỏ hàng"
@@ -477,7 +480,7 @@ export default function FlightItem({ item, list }: Props) {
                   {!showPriceDetail && (
                     <div className="h-[100px]">
                       <Skeleton
-                        className="flex flex-col items-center justify-center  absolute left-1/2 top-[75%] -translate-x-1/2 -translate-y-1/2"
+                        className="flex flex-col items-center justify-center  absolute left-1/2 top-[50%] -translate-x-1/2 -translate-y-1/2"
                         classNameLoader="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
                       />
                     </div>
@@ -492,7 +495,7 @@ export default function FlightItem({ item, list }: Props) {
           <div className="w-full transition-all ease-linear duration-1000">
             {/* các hành trình bay render ra luôn */}
             {item.itineraries.map((detail, index) => (
-              <div className="p-4 flex" key={index}>
+              <div className="w-full p-4 flex flex-col md:flex-row" key={index}>
                 {detail.segments.map((seg, indexSeg) => (
                   <div key={indexSeg} className="flex-1">
                     <div className="flex items-center gap-2 border border-gray-300 px-4 py-2">
@@ -511,16 +514,16 @@ export default function FlightItem({ item, list }: Props) {
                     </div>
                     <div className="border border-gray-300 border-t-0 p-4 flex items-center justify-between">
                       <div>
-                        <div className="text-xl font-semibold text-textColor">
+                        <div className="text-base lg:text-xl font-semibold text-textColor">
                           {getHourFromAPI(seg.departure.at)}
                         </div>
-                        <div className="text-sm text-textColor font-medium">
+                        <div className="text-xs lg:text-sm text-textColor font-medium">
                           {getDate(seg.departure.at)}
                         </div>
-                        <div className="text-sm text-textColor font-normal">
+                        <div className="text-xs lg:text-sm text-textColor font-normal">
                           Nhà ga khởi hành {seg.departure.terminal}
                         </div>
-                        <div className="text-sm text-textColor font-normal">
+                        <div className="text-xs lg:text-sm text-textColor font-normal">
                           {seg.departure.iataCode},{" "}
                           {getCountry(
                             countries,
@@ -529,22 +532,22 @@ export default function FlightItem({ item, list }: Props) {
                         </div>
                       </div>
                       <div className="relative">
-                        <div className="text-center text-sm font-medium">
+                        <div className="text-center text-xs lg:text-sm font-medium">
                           {getDurationFromAPI(seg.duration)}
                         </div>
                         <div className="md:w-10 lg:w-24 h-1 bg-blueColor absolute left-1/2 -translate-x-1/2"></div>
                       </div>
                       <div>
-                        <div className="text-xl font-semibold text-textColor">
+                        <div className="text-base lg:text-xl font-semibold text-textColor">
                           {getHourFromAPI(seg.arrival.at)}
                         </div>
-                        <div className="text-sm text-textColor font-medium">
+                        <div className="text-xs lg:text-sm text-textColor font-medium">
                           {getDate(seg.arrival.at)}
                         </div>
-                        <div className="text-sm text-textColor font-normal">
+                        <div className="text-xs lg:text-sm text-textColor font-normal">
                           Nhà ga khởi hành {seg.arrival.terminal}
                         </div>
-                        <div className="text-sm text-textColor font-normal">
+                        <div className="text-xs lg:text-sm text-textColor font-normal">
                           {seg.arrival.iataCode},{" "}
                           {getCountry(
                             countries,
@@ -557,7 +560,7 @@ export default function FlightItem({ item, list }: Props) {
                 ))}
               </div>
             ))}
-            <div className="px-5 pb-2 flex items-center gap-4">
+            <div className="px-5 pb-2 flex items-center flex-wrap gap-2">
               <span className="flex gap-1">
                 <span className="text-sm">Hành lý:</span>
                 <span className="text-sm font-semibold">

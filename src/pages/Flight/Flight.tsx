@@ -34,6 +34,7 @@ import Popover from "src/components/Popover"
 import { path } from "src/constant/path"
 import useQueryConfig from "src/hooks/useQueryConfig"
 import Skeleton from "src/components/Skeleton"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "src/components/ui/sheet"
 
 export type FormData = Pick<
   schemaType,
@@ -238,7 +239,7 @@ export default function Flight() {
 
   return (
     // khắc phục lệch layout
-    <div className="h-[2650px] bg-[#fff]">
+    <div className="h-[3180px] md:h-[2600px] bg-[#fff]">
       {loading ? (
         <Skeleton className="flex flex-col justify-center items-center absolute left-1/2 top-[10%] -translate-x-1/2 -translate-y-1/2" />
       ) : (
@@ -283,7 +284,7 @@ export default function Flight() {
                         </div>
                       }
                     >
-                      <div className="flex gap-1 items-center px-2 text-whiteColor rounded-sm text-sm duration-200 hover:text-gray-300">
+                      <div className="hidden md:flex gap-1 items-center px-2 text-whiteColor rounded-sm text-sm duration-200 hover:text-gray-300">
                         <img src={coVN} alt="Cờ Việt Nam" className="h-5 w-5 object-contain" />
                         Ngôn ngữ
                       </div>
@@ -305,6 +306,55 @@ export default function Flight() {
                         />
                       </svg>
                     </Link>
+
+                    <div className="block md:hidden">
+                      <Sheet>
+                        <SheetTrigger>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="white"
+                            className="mt-1 h-8 w-8"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                            />
+                          </svg>
+                        </SheetTrigger>
+                        <SheetContent className="p-0">
+                          <SheetHeader>
+                            <SheetTitle className="mt-10">
+                              {isAuthenticated && (
+                                <div className="py-[2px] px-3 rounded-sm duration-200 hover:bg-[#ddd]/20 flex items-center gap-1 text-textColor font-medium text-base">
+                                  Xin chào, {getNameToEmail(isProfile as string)}
+                                </div>
+                              )}
+                              {!isAuthenticated && (
+                                <div className="px-3 w-full flex items-center gap-1">
+                                  <Link
+                                    to={path.register}
+                                    className="w-[50%] py-2 px-3 duration-200 hover:text-[#ddd]/80 rounded-sm text-sm text-textColor border border-gray-300"
+                                  >
+                                    Đăng ký
+                                  </Link>
+                                  <Link
+                                    to={path.login}
+                                    className="w-[50%] py-2 px-3 border-2 border-blueColor bg-blueColor duration-200 hover:bg-blueColor/80 hover:border-blueColor/80 rounded-sm text-sm text-whiteColor hover:text-[#ddd]/80 "
+                                  >
+                                    Đăng nhập
+                                  </Link>
+                                </div>
+                              )}
+                            </SheetTitle>
+                            <div className="w-full h-[1px] bg-gray-300"></div>
+                          </SheetHeader>
+                        </SheetContent>
+                      </Sheet>
+                    </div>
 
                     {isAuthenticated && (
                       <Popover
@@ -338,7 +388,7 @@ export default function Flight() {
                           </div>
                         }
                       >
-                        <div className="py-[6px] px-3 border-2 rounded-sm duration-200 hover:bg-[#ddd]/20 flex items-center gap-1 text-whiteColor font-medium text-sm">
+                        <div className="hidden py-[6px] px-3 border-2 rounded-sm duration-200 hover:bg-[#ddd]/20 md:flex items-center gap-1 text-whiteColor font-medium text-sm">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -360,7 +410,7 @@ export default function Flight() {
                     )}
 
                     {!isAuthenticated && (
-                      <div className="flex items-center gap-1">
+                      <div className="hidden md:flex items-center gap-1">
                         <Link
                           to={path.register}
                           className="py-2 px-3 duration-200 hover:text-[#ddd]/80 rounded-sm text-sm text-whiteColor"
@@ -378,11 +428,11 @@ export default function Flight() {
                   </div>
                 </div>
 
-                <h1 className="text-whiteColor md:text-2xl lg:text-4xl font-semibold text-center my-2 lg:my-8">
+                <h1 className="hidden md:block text-whiteColor md:text-2xl lg:text-4xl font-semibold text-center my-2 lg:my-8">
                   Từ Đông Nam Á Đến Thế Giới, Trong Tầm Tay Bạn.
                 </h1>
 
-                <div className="relative z-20 mx-auto w-[55%]">
+                <div className="mt-8 md:mt-0 relative z-20 mx-auto w-full md:w-[55%]">
                   <div className="py-4 px-8 bg-whiteColor rounded-lg shadow-lg">
                     <nav className="flex items-center gap-4">
                       <Link to={path.flight} className="flex flex-col items-center">
@@ -403,15 +453,15 @@ export default function Flight() {
                   </div>
                 </div>
 
-                <div className="-mt-8 mx-auto w-[90%]">
+                <div className="mt-4 md:-mt-8 mx-auto w-full md:w-[90%]">
                   <form
                     autoComplete="off"
                     onSubmit={handleSubmitSearch}
                     noValidate
-                    className="p-8 pt-16 bg-whiteColor rounded-lg shadow-md"
+                    className="p-4 md:p-8 md:pt-12 bg-whiteColor rounded-lg shadow-md"
                   >
                     {/* loại chuyến bay */}
-                    <div className="mt-2 flex items-center gap-4">
+                    <div className="flex items-center gap-4">
                       <div className="flex items-center gap-1">
                         <input
                           type="radio"
@@ -443,11 +493,11 @@ export default function Flight() {
                       </div>
                     </div>
 
-                    <div className="mt-8 flex relative gap-2">
+                    <div className="mt-4 grid grid-cols-4 relative gap-2 flex-wrap">
                       {/* điểm xuất phát */}
                       <InputSearch
                         placeholder="Bay từ"
-                        classNameList="z-20 absolute top-16 left-0 h-[300px] bg-whiteColor overflow-y-auto overflow-x-hidden rounded-sm shadow-sm transition-all duration-1000 ease-linear"
+                        classNameList={`z-20 absolute top-20 left-0 w-full ${showListAirport ? "h-[300px]" : "h-0"} bg-whiteColor overflow-y-auto overflow-x-hidden rounded-sm shadow-sm transition-all duration-200 ease-linear`}
                         ref={inputRef}
                         filterList={filterAirportCodeList_1}
                         value={searchText}
@@ -471,7 +521,7 @@ export default function Flight() {
 
                       <InputSearch
                         placeholder="Bay đến"
-                        classNameList="z-20 absolute top-16 left-0 h-[300px] bg-whiteColor overflow-y-auto overflow-x-hidden rounded-sm shadow-sm transition-all duration-1000 ease-linear"
+                        classNameList={`z-20 absolute top-20 left-0 w-full ${showListAirport2 ? "h-[300px]" : "h-0"} bg-whiteColor overflow-y-auto overflow-x-hidden rounded-sm shadow-sm transition-all duration-200 ease-linear`}
                         ref={inputRef2}
                         filterList={filterAirportCodeList_2}
                         value={searchText2}
@@ -511,7 +561,7 @@ export default function Flight() {
                         aria-label="buttonChangeValue"
                         type="button"
                         onClick={exchangeTwoValues}
-                        className="z-20 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 flex items-center justify-center w-7 h-7 rounded-full text-blueColor border-2 border-blueColor bg-blue-100"
+                        className="z-10 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 flex items-center justify-center w-7 h-7 rounded-full text-blueColor border-2 border-blueColor bg-blue-100"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -530,21 +580,21 @@ export default function Flight() {
                       </button>
                     </div>
 
-                    <div className="mt-8 flex justify-between items-center gap-2 flex-wrap">
-                      <div className="flex-1">
+                    <div className="mt-2 md:mt-4 grid grid-cols-4 items-center gap-2 md:gap-x-2 md:gap-y-4">
+                      <div className="col-span-4 lg:col-span-2">
                         <div className="flex items-center justify-between gap-2">
                           {/* Khứ hồi hoặc 1 chiều */}
                           <div
                             className={
                               flightType === "roundTrip"
-                                ? "w-[70%] flex justify-start gap-2"
+                                ? "w-[70%] flex justify-start gap-1 md:gap-2"
                                 : "w-[70%] flex justify-start"
                             }
                           >
                             {/* date ngày đi*/}
                             <div className={flightType === "roundTrip" ? "w-[50%]" : "w-[100%]"}>
                               <SelectDate
-                                text="Ngày khởi hành"
+                                text="Ngày đi"
                                 control={control}
                                 setDate={setDate}
                                 date={date}
@@ -666,7 +716,7 @@ export default function Flight() {
                         </div>
                       </div>
 
-                      <div className="flex-1">
+                      <div className="col-span-4 lg:col-span-2">
                         <div className="flex items-center justify-between gap-2">
                           {/* hạng vé */}
                           <div
@@ -751,8 +801,8 @@ export default function Flight() {
           </div>
 
           <div className="container">
-            <div className="my-8 px-8 grid grid-cols-3 items-center justify-between gap-4">
-              <div className="md:h-[120px] lg:h-[100px] col-span-1 border border-gray-200 rounded-md shadow-lg p-4">
+            <div className="mt-8 px-8 hidden md:grid grid-cols-3 items-center justify-between gap-4">
+              <div className="col-span-1 border border-gray-200 rounded-md shadow-lg p-4">
                 <div className="flex items-center gap-4">
                   <img src={banner3} alt="" className="flex-shrink-0 w-14 h-14" />
                   <div className="flex-grow">
@@ -765,7 +815,7 @@ export default function Flight() {
                   </div>
                 </div>
               </div>
-              <div className="md:h-[120px] lg:h-[100px] col-span-1 border border-gray-200 rounded-md shadow-lg p-4">
+              <div className="col-span-1 border border-gray-200 rounded-md shadow-lg p-4">
                 <div className="flex items-center gap-4">
                   <img src={banner2} alt="" className="flex-shrink-0 w-14 h-14" />
                   <div className="flex-grow">
@@ -778,7 +828,7 @@ export default function Flight() {
                   </div>
                 </div>
               </div>
-              <div className="md:h-[120px] lg:h-[100px] col-span-1 border border-gray-200 rounded-md shadow-lg p-4">
+              <div className="col-span-1 border border-gray-200 rounded-md shadow-lg p-4">
                 <div className="flex items-center gap-4">
                   <img src={banner1} alt="" className="flex-shrink-0 w-14 h-14" />
                   <div className="flex-grow">
@@ -791,16 +841,16 @@ export default function Flight() {
               </div>
             </div>
 
-            <div className="my-8 flex items-center gap-4">
-              <div className="w-[50%] h-[450px]">
+            <div className="mt-4 grid grid-cols-2 items-center flex-wrap gap-4">
+              <div className="col-span-2 md:col-span-1 h-[450px]">
                 <img src={ticketBanner} alt="banner" className="w-full h-full object-cover" />
               </div>
-              <div className="w-[50%] h-[450px]">
+              <div className="col-span-2 md:col-span-1 h-[450px]">
                 <img src={ticketBanner2} alt="banner" className="w-full h-full object-cover" />
               </div>
             </div>
 
-            <div className="mt-16 pb-8 relative">
+            <div className="mt-8 pb-8 relative">
               <div className="w-full h-[400px]">
                 <img
                   src={bannerFlight}
@@ -809,17 +859,17 @@ export default function Flight() {
                 />
               </div>
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-2 bg-white p-4 rounded-sm shadow-sm">
-                <h3 className="text-lg lg:text-2xl font-semibold text-textColor">
+                <h3 className="text-lg lg:text-2xl text-center font-semibold text-textColor">
                   Đối tác hàng không
                 </h3>
-                <div className="mt-4 grid grid-cols-8 items-center gap-2 flex-wrap">
+                <div className="mt-0 md:mt-4 grid grid-cols-8 items-center gap-2 flex-wrap">
                   {bannerAirLineList.map((item, index) => (
                     <div key={index}>
                       <div className="col-span-1">
                         <img
                           src={item}
                           alt={item}
-                          className="md:w-10 md:h-8 lg:w-16 lg:h-18 object-contain"
+                          className="w-10 h-10 md:w-10 md:h-8 lg:w-16 lg:h-18 object-contain"
                         />
                       </div>
                     </div>
@@ -828,7 +878,7 @@ export default function Flight() {
               </div>
             </div>
 
-            <div className="border-t border-t-gray-300 pt-8 relative">
+            <div className="pt-0 mt:py-8 relative">
               <div className="w-full h-[400px]">
                 <img
                   src={bannerFlight2}

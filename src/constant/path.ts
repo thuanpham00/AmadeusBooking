@@ -6,5 +6,7 @@ export const path = {
   flight: "/flight",
   flightSearch: "/flight/search",
   flightOrder: "/flight/order",
-  flightPayment: "/flight/payment"
+  flightPayment: "/flight/payment",
+
+  paymentComplete: "/complete"
 } as const

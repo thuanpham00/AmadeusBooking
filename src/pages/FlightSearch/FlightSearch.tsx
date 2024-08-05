@@ -34,6 +34,7 @@ import banner2 from "src/img/Flight/air-ticket-booking.webp"
 import banner3 from "src/img/Flight/travel-design-template.webp"
 import backGround from "src/img/FlightOrder/banner.webp"
 import useScrollHeader from "src/hooks/useScrollHeader"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "src/components/ui/sheet"
 
 const fetchDataAirport = () => Promise.resolve(airportCodes) // khởi tạo 1 promise
 
@@ -277,7 +278,7 @@ export default function FlightSearch() {
       </Helmet>
 
       <div
-        className="relative z-10 h-[500px]"
+        className="relative z-10 h-[650px]"
         style={{
           backgroundImage: `url(${backGround})`,
           backgroundPosition: "center",
@@ -286,17 +287,17 @@ export default function FlightSearch() {
         }}
       >
         <div
-          className={`w-full bg-whiteColor ${showHeader ? "fixed top-0 left-1/2 -translate-x-1/2 shadow-xl" : "absolute top-0 left-1/2 -translate-x-1/2"} z-50 transition-all ease-linear duration-1000`}
+          className={`w-full bg-whiteColor ${showHeader ? "md:fixed md:top-0 md:left-1/2 md:-translate-x-1/2 shadow-xl" : "md:absolute md:top-0 md:left-1/2 md:-translate-x-1/2"} z-50 transition-all ease-linear duration-1000`}
         >
           <div className="container">
             <form
               autoComplete="off"
               onSubmit={handleSubmitSearch}
               noValidate
-              className="grid md:grid-cols-6 lg:grid-cols-12 items-center gap-2 flex-wrap  py-2"
+              className="grid grid-cols-6 lg:grid-cols-12 items-center gap-2 flex-wrap py-2"
             >
               {/* loại chuyến bay */}
-              <div className="md:col-span-1 lg:col-span-1 px-2 py-[14px] bg-gray-300 rounded-md relative">
+              <div className="col-span-6 md:col-span-1 lg:col-span-1 px-2 py-[14px] bg-gray-300 rounded-md relative">
                 <Popover open={open2} onOpenChange={setOpen2}>
                   <PopoverTrigger asChild>
                     <ButtonShadcn
@@ -342,12 +343,12 @@ export default function FlightSearch() {
                 </Popover>
               </div>
 
-              <div className="md:col-span-5 lg:col-span-4">
-                <div className="flex relative items-center gap-2">
+              <div className="col-span-6 md:col-span-3 lg:col-span-4">
+                <div className="grid grid-cols-4 relative items-center gap-2">
                   {/* điểm xuất phát */}
                   <InputSearch
                     placeholder="Bay từ"
-                    classNameList="z-20 absolute top-20 left-0 h-[300px] bg-whiteColor overflow-y-auto overflow-x-hidden rounded-sm shadow-sm transition-all duration-1000 ease-linear"
+                    classNameList={`z-50 absolute top-16 left-0 w-full ${showListAirport ? "h-[300px]" : "h-0"} bg-whiteColor overflow-y-auto overflow-x-auto rounded-sm shadow-sm transition-all duration-200 ease-linear`}
                     classNameBlock="py-2 px-2 rounded-md flex items-center bg-gray-300 text-textColor"
                     classNameError="py-2 px-3 border border-red-500 bg-red-100 rounded-md flex items-center"
                     classNameInput="px-2 outline-none bg-transparent text-xl flex-grow font-semibold w-[120px] truncate"
@@ -370,7 +371,7 @@ export default function FlightSearch() {
                   {/* điểm đến */}
                   <InputSearch
                     placeholder="Bay đến"
-                    classNameList="z-20 absolute top-20 left-0 h-[300px] bg-whiteColor overflow-y-auto overflow-x-hidden rounded-sm shadow-sm transition-all duration-1000 ease-linear"
+                    classNameList={`z-50 absolute top-16 left-0 w-full ${showListAirport2 ? "h-[300px]" : "h-0"} bg-whiteColor overflow-y-auto overflow-x-auto rounded-sm shadow-sm transition-all duration-200 ease-linear`}
                     classNameBlock="py-2 px-2 rounded-md flex items-center bg-gray-300 text-textColor"
                     classNameError="py-2 px-3 border border-red-500 bg-red-100 rounded-md flex items-center"
                     classNameInput="px-2 outline-none bg-transparent text-xl flex-grow font-semibold w-[120px] truncate"
@@ -434,7 +435,7 @@ export default function FlightSearch() {
                 </div>
               </div>
 
-              <div className="md:col-span-2 lg:col-span-3">
+              <div className="col-span-6 md:col-span-2 lg:col-span-3">
                 <div className="flex justify-between items-center gap-2">
                   {/* Khứ hồi hoặc 1 chiều */}
                   <div className="w-full flex items-center gap-2">
@@ -470,7 +471,7 @@ export default function FlightSearch() {
                 </div>
               </div>
 
-              <div className="md:col-span-2 lg:col-span-3">
+              <div className="col-span-6 md:col-span-3 lg:col-span-3">
                 <div className="flex gap-2">
                   {/* hành khách */}
                   <div
@@ -633,27 +634,27 @@ export default function FlightSearch() {
                 </div>
               </div>
 
-              <div className="md:col-span-2 lg:col-span-1">
+              <div className="col-span-6 md:col-span-3 lg:col-span-1">
                 <Button
                   disable={flightOffersSearchQuery.isPending}
                   classNameWrapper="w-full flex-1 relative"
                   type="submit"
                   nameButton="Tìm kiếm"
-                  className="px-8 md:py-[20px] lg:py-[8px] bg-blueColor w-full text-whiteColor text-base rounded-md hover:bg-blueColor/80 duration-200 font-semibold border-blueColor"
+                  className="px-8 py-[20px] lg:py-[8px] bg-blueColor w-full text-whiteColor text-base rounded-md hover:bg-blueColor/80 duration-200 font-semibold border-blueColor"
                 />
               </div>
             </form>
           </div>
         </div>
 
-        <div className="z-30 w-full absolute md:top-44 lg:top-16 left-1/2 -translate-x-1/2">
+        <div className="z-30 w-full absolute top-[410px] md:top-32 lg:top-16 left-1/2 -translate-x-1/2">
           <div className="container">
             {/* không load thì isPending */}
             {!flightOffersSearchQuery.isFetching && (
               <div>
                 {currentList?.length > 0 && (
                   <div className="py-8 grid grid-cols-12 gap-4">
-                    <div className="col-span-3">
+                    <div className="hidden lg:block lg:col-span-3">
                       <AsideFilterFlight queryConfig={queryConfig} />
 
                       <div className="my-6 w-full">
@@ -667,18 +668,48 @@ export default function FlightSearch() {
                       </div>
                     </div>
 
-                    <div className="col-span-9">
-                      <h1 className="text-2xl text-textColor font-semibold mb-2">
-                        Chuyến bay từ
-                        {"  "}
-                        {getCountry(airportCodes, searchText)}
-                        {" - "}
-                        {searchText} đến
-                        {"  "}
-                        {getCountry(airportCodes, searchText2)}
-                        {" - "}
-                        {searchText2}
-                      </h1>
+                    <div className="col-span-12 lg:col-span-9">
+                      <div className="flex items-center gap-2 lg:gap-0 mb-2">
+                        <Sheet>
+                          <SheetTrigger>
+                            <div className="md:block lg:hidden p-2 bg-blueColor rounded-xl">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="white"
+                                className="size-6"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"
+                                />
+                              </svg>
+                            </div>
+                          </SheetTrigger>
+                          <SheetContent className="p-0" side="left">
+                            <SheetHeader>
+                              <SheetTitle className="mt-10">
+                                <AsideFilterFlight queryConfig={queryConfig} />
+                              </SheetTitle>
+                            </SheetHeader>
+                          </SheetContent>
+                        </Sheet>
+
+                        <h1 className="text-lg lg:text-2xl text-textColor font-semibold ">
+                          Chuyến bay từ
+                          {"  "}
+                          {getCountry(airportCodes, searchText)}
+                          {" - "}
+                          {searchText} đến
+                          {"  "}
+                          {getCountry(airportCodes, searchText2)}
+                          {" - "}
+                          {searchText2}
+                        </h1>
+                      </div>
 
                       {currentList.map((item) => (
                         <div key={item.id}>

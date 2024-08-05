@@ -1,10 +1,8 @@
 import { Link } from "react-router-dom"
 import { path } from "src/constant/path"
-import hotel from "../../img/svg/hotel-1-svgrepo-com.svg"
 import logo from "../../img/favicon/FaviconFlight.webp"
 import coVN from "../../img/lauguage/coVN.webp"
 import coMy from "../../img/lauguage/coMy.webp"
-import iconFlight from "../../img/svg/flight-svgrepo-com.svg"
 import { useContext } from "react"
 import { AppContext } from "src/context/useContext"
 import Popover from "../Popover"
@@ -18,6 +16,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger
 } from "../ui/navigation-menu"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet"
 
 export default function Header2() {
   const { isAuthenticated, isProfile, setIsAuthenticated, setIsProfile } = useContext(AppContext)
@@ -34,13 +33,13 @@ export default function Header2() {
         <div className="flex items-center justify-between cursor-pointer">
           <div className="flex items-center">
             <Link to={path.home} className="flex items-center">
-              <div className="w-14 h-14">
+              <div className="hidden md:block w-14 h-14">
                 <img src={logo} alt="Logo" className="w-full h-full object-contain" />
               </div>
               <div className="text-xl text-textColor font-semibold">Booking.</div>
             </Link>
 
-            <nav className="ml-8 flex items-center">
+            <nav className="ml-8 hidden md:flex items-center">
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
@@ -49,7 +48,6 @@ export default function Header2() {
                         to={path.flight}
                         className="flex items-center text-textColor duration-200 hover:text-gray-500"
                       >
-                        <img src={iconFlight} alt="icon" className="w-5 h-5" />
                         <span className="text-base font-semibold hover:underline block">
                           Chuyến bay
                         </span>
@@ -91,7 +89,6 @@ export default function Header2() {
                         to={path.flightSearch}
                         className="flex items-center text-textColor duration-200 hover:text-gray-500"
                       >
-                        <img src={hotel} alt="icon hotel" className="w-4 h-4 mr-1" />
                         <span className="text-base font-semibold hover:underline block">
                           Khánh sạn
                         </span>
@@ -123,7 +120,7 @@ export default function Header2() {
                 </div>
               }
             >
-              <div className="flex gap-1 items-center p-2 duration-200 text-textColor rounded-sm text-sm hover:text-gray-500">
+              <div className="hidden md:flex gap-1 items-center p-2 duration-200 text-textColor rounded-sm text-sm hover:text-gray-500">
                 <img src={coVN} alt="Cờ Việt Nam" className="h-5 w-5 object-contain" />
                 Ngôn ngữ
               </div>
@@ -145,6 +142,55 @@ export default function Header2() {
                 />
               </svg>
             </Link>
+
+            <div className="block md:hidden">
+              <Sheet>
+                <SheetTrigger>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="black"
+                    className="mt-1 h-8 w-8"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                    />
+                  </svg>
+                </SheetTrigger>
+                <SheetContent className="p-0">
+                  <SheetHeader>
+                    <SheetTitle className="mt-10">
+                      {isAuthenticated && (
+                        <div className="py-[2px] px-3 rounded-sm duration-200 hover:bg-[#ddd]/20 flex items-center gap-1 text-textColor font-medium text-base">
+                          Xin chào, {getNameToEmail(isProfile as string)}
+                        </div>
+                      )}
+                      {!isAuthenticated && (
+                        <div className="px-3 w-full flex items-center gap-1">
+                          <Link
+                            to={path.register}
+                            className="w-[50%] py-2 px-3 duration-200 hover:text-[#ddd]/80 rounded-sm text-sm text-textColor border border-gray-300"
+                          >
+                            Đăng ký
+                          </Link>
+                          <Link
+                            to={path.login}
+                            className="w-[50%] py-2 px-3 border-2 border-blueColor bg-blueColor duration-200 hover:bg-blueColor/80 hover:border-blueColor/80 rounded-sm text-sm text-whiteColor hover:text-[#ddd]/80 "
+                          >
+                            Đăng nhập
+                          </Link>
+                        </div>
+                      )}
+                    </SheetTitle>
+                    <div className="w-full h-[1px] bg-gray-300"></div>
+                  </SheetHeader>
+                </SheetContent>
+              </Sheet>
+            </div>
 
             {isAuthenticated && (
               <Popover
@@ -178,7 +224,7 @@ export default function Header2() {
                   </div>
                 }
               >
-                <div className="py-[6px] px-3 border-2 border-textColor rounded-sm duration-200 hover:bg-[#ddd]/80 flex items-center gap-1 text-textColor font-semibold text-sm">
+                <div className="hidden py-[6px] px-3 border-2 border-textColor rounded-sm duration-200 hover:bg-[#ddd]/80 md:flex items-center gap-1 text-textColor font-semibold text-sm">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -200,7 +246,7 @@ export default function Header2() {
             )}
 
             {!isAuthenticated && (
-              <div className="flex items-center gap-2">
+              <div className="hidden md:flex items-center gap-2">
                 <Link
                   to={path.register}
                   className="py-2 px-3 border-2 border-blueColor duration-200 hover:bg-[#ddd]/80 rounded-sm text-sm"
