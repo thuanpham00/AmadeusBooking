@@ -12,7 +12,7 @@ import {
   formatCurrency,
   getAirlines,
   getCountry,
-  getDate,
+  getDateFromAPI,
   getDurationFromAPI,
   getHourFromAPI
 } from "src/utils/utils"
@@ -236,8 +236,7 @@ export default function FlightOrder() {
 
   useEffect(() => {
     if (flightCreateOrderMutation.data?.data) {
-      localStorage.setItem("detailPayment", JSON.stringify(flightCreateOrderMutation.data.data))
-      console.log(flightCreateOrderMutation.data.data)
+      localStorage.setItem("detailPaymentData", JSON.stringify(flightCreateOrderMutation.data.data))
     }
   }, [flightCreateOrderMutation.data?.data])
 
@@ -326,194 +325,189 @@ export default function FlightOrder() {
           <div className="container">
             <div className="grid grid-cols-12 gap-4">
               <div className="col-span-12 order-2 md:col-span-8 md:order-1">
-                <div className="p-4 bg-[#fff] shadow-md rounded-xl">
-                  {data.data.flightOffers[0].itineraries.map((item, index) => (
-                    <div
-                      key={index}
-                      className="relative p-4 mb-4 last:mb-0 rounded-sm border border-gray-300 shadow"
-                    >
-                      <div className="flex items-center justify-between flex-wrap">
-                        <div className="flex items-center gap-1">
-                          <h2 className="text-base md:text-xl text-textColor font-semibold">
-                            {item.segments[0].departure.iataCode},{" "}
-                            {getCountry(
-                              countries,
-                              data.dictionaries.locations[item.segments[0].departure.iataCode]
-                                .countryCode
-                            )}
-                          </h2>
-                          <div>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={1.5}
-                              stroke="currentColor"
-                              className="size-6"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"
-                              />
-                            </svg>
-                          </div>
-                          <h2 className="text-base md:text-xl text-textColor font-semibold">
-                            {item.segments[item.segments.length - 1].arrival.iataCode},{" "}
-                            {getCountry(
-                              countries,
-                              data.dictionaries.locations[
-                                item.segments[item.segments.length - 1].arrival.iataCode
-                              ].countryCode
-                            )}
-                          </h2>
+                {data.data.flightOffers[0].itineraries.map((item, index) => (
+                  <div
+                    key={index}
+                    className="relative p-4 mb-4 bg-white last:mb-0 shadow-md rounded-lg border border-gray-300 shadow"
+                  >
+                    <div className="flex items-center justify-between flex-wrap">
+                      <div className="flex items-center gap-1">
+                        <h2 className="text-base md:text-xl text-textColor font-semibold">
+                          {item.segments[0].departure.iataCode},{" "}
+                          {getCountry(
+                            countries,
+                            data.dictionaries.locations[item.segments[0].departure.iataCode]
+                              .countryCode
+                          )}
+                        </h2>
+                        <div>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="size-6"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"
+                            />
+                          </svg>
                         </div>
-                        <div className="text-white p-1 bg-red-600 text-xs font-normal">
-                          KHÔNG HOÀN TIỀN
-                        </div>
+                        <h2 className="text-base md:text-xl text-textColor font-semibold">
+                          {item.segments[item.segments.length - 1].arrival.iataCode},{" "}
+                          {getCountry(
+                            countries,
+                            data.dictionaries.locations[
+                              item.segments[item.segments.length - 1].arrival.iataCode
+                            ].countryCode
+                          )}
+                        </h2>
                       </div>
-                      <div className="mt-2 flex items-center gap-2">
-                        <div className="p-1 text-sm text-textColor font-medium bg-[#ffedd1]">
-                          {getDate(item.segments[0].departure.at)}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="text-gray-500 text-sm">
-                            {item.segments.length === 1 ? <div>Non Stop</div> : <div>1 Stop</div>}
-                          </div>
-                          <div className="w-1 h-1 bg-textColor rounded-full"></div>
-                          <span className="text-gray-500 text-sm">
-                            {item.segments.length === 1 && (
-                              <div>{getDurationFromAPI(item.segments[0].duration)}</div>
-                            )}
-
-                            {item.segments.length !== 1 && (
-                              <div>
-                                {(() => {
-                                  const durationHour1 = getDurationFromAPI(
-                                    item.segments[0].duration
-                                  ).split(" giờ ")[0]
-                                  const durationHour2 = getDurationFromAPI(
-                                    item.segments[item.segments.length - 1].duration
-                                  ).split(" giờ ")[0]
-
-                                  const durationMinute1 = getDurationFromAPI(
-                                    item.segments[0].duration
-                                  )
-                                    .split(" giờ ")[1]
-                                    .split(" phút")[0]
-
-                                  const durationMinute2 = getDurationFromAPI(
-                                    item.segments[item.segments.length - 1].duration
-                                  )
-                                    .split(" giờ ")[1]
-                                    .split(" phút")[0]
-
-                                  let hours = Number(durationHour1) + Number(durationHour2)
-                                  let minute = Number(durationMinute1) + Number(durationMinute2)
-                                  if (minute >= 60) {
-                                    minute = minute % 60
-                                    hours = hours + 1
-                                  }
-                                  return (
-                                    <div>
-                                      {hours} giờ {minute} phút
-                                    </div>
-                                  )
-                                })()}
-                              </div>
-                            )}
-                          </span>
-                        </div>
+                      <div className="text-white p-1 bg-red-600 text-xs font-normal">
+                        KHÔNG HOÀN TIỀN
                       </div>
+                    </div>
+                    <div className="mt-2 flex items-center gap-2">
+                      <div className="p-1 text-sm text-textColor font-medium bg-[#ffedd1]">
+                        {getDateFromAPI(item.segments[0].departure.at)}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="text-gray-500 text-sm">
+                          {item.segments.length === 1 ? <div>Non Stop</div> : <div>1 Stop</div>}
+                        </div>
+                        <div className="w-1 h-1 bg-textColor rounded-full"></div>
+                        <span className="text-gray-500 text-sm">
+                          {item.segments.length === 1 && (
+                            <div>{getDurationFromAPI(item.segments[0].duration)}</div>
+                          )}
 
-                      <div className="bg-green-600 w-1 h-16 absolute left-0 top-4"></div>
+                          {item.segments.length !== 1 && (
+                            <div>
+                              {(() => {
+                                const durationHour1 = getDurationFromAPI(
+                                  item.segments[0].duration
+                                ).split(" giờ ")[0]
+                                const durationHour2 = getDurationFromAPI(
+                                  item.segments[item.segments.length - 1].duration
+                                ).split(" giờ ")[0]
 
-                      {item.segments.map((detail, indexDetail) => (
-                        <div key={indexDetail} className="mt-2">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <img src={iconFlight} alt="iconFlight" className="w-8 h-8" />
-                              <h3 className="text-sm font-normal">
-                                {getAirlines(detail.carrierCode)}
-                              </h3>
-                              <span className="text-sm text-gray-500">{detail.carrierCode}</span>
-                              <span className="text-sm text-gray-500">{detail.number}</span>
+                                const durationMinute1 = getDurationFromAPI(
+                                  item.segments[0].duration
+                                )
+                                  .split(" giờ ")[1]
+                                  .split(" phút")[0]
+
+                                const durationMinute2 = getDurationFromAPI(
+                                  item.segments[item.segments.length - 1].duration
+                                )
+                                  .split(" giờ ")[1]
+                                  .split(" phút")[0]
+
+                                let hours = Number(durationHour1) + Number(durationHour2)
+                                let minute = Number(durationMinute1) + Number(durationMinute2)
+                                if (minute >= 60) {
+                                  minute = minute % 60
+                                  hours = hours + 1
+                                }
+                                return (
+                                  <div>
+                                    {hours} giờ {minute} phút
+                                  </div>
+                                )
+                              })()}
                             </div>
-                            <div className="text-sm text-gray-500">
+                          )}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="bg-green-600 w-1 h-16 absolute left-0 top-4"></div>
+
+                    {item.segments.map((detail, indexDetail) => (
+                      <div key={indexDetail} className="mt-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <img src={iconFlight} alt="iconFlight" className="w-8 h-8" />
+                            <h3 className="text-sm font-normal">
+                              {getAirlines(detail.carrierCode)}
+                            </h3>
+                            <span className="text-sm text-gray-500">{detail.carrierCode}</span>
+                            <span className="text-sm text-gray-500">{detail.number}</span>
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {
+                              data.data.flightOffers[0].travelerPricings[0].fareDetailsBySegment[0]
+                                .cabin
+                            }
+                          </div>
+                        </div>
+
+                        <div className="relative mt-2 p-2 md:p-4 bg-[#f4f4f4]">
+                          <div className="flex items-center pb-4 md:pb-2 gap-4">
+                            <div className="h-[100px] md:h-[80px] flex flex-col justify-between">
+                              <span className="block text-base font-medium">
+                                {getHourFromAPI(detail.departure.at)}
+                              </span>
+
+                              <span className="block text-base font-medium">
+                                {getHourFromAPI(detail.arrival.at)}
+                              </span>
+                            </div>
+
+                            <div className="relative h-[80px] md:h-[60px] flex flex-col justify-between">
+                              <div className="border border-gray-500 bg-white w-3 h-3 rounded-full"></div>
+                              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[2px] h-8 bg-gray-500"></div>
+                              <div className="border border-gray-500 bg-white w-3 h-3 rounded-full"></div>
+                            </div>
+
+                            <div className="h-[100px] md:h-[80px] flex flex-col justify-between">
+                              <div className="text-base font-medium">
+                                {detail.departure.iataCode}
+                                {" - "}
+                                {getCountry(
+                                  countries,
+                                  data.dictionaries.locations[detail.departure.iataCode].countryCode
+                                )}
+                                , Nhà ga khởi hành: {detail.departure.terminal}
+                              </div>
+                              <span className="text-sm">{getDurationFromAPI(detail.duration)}</span>
+                              <div className="text-base font-medium">
+                                {detail.arrival.iataCode}
+                                {" - "}
+                                {getCountry(
+                                  countries,
+                                  data.dictionaries.locations[detail.arrival.iataCode].countryCode
+                                )}
+                                , Nhà ga khởi hành: {detail.arrival.terminal}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="pt-2 border-t border-t-gray-300 flex items-center">
+                            <img src={checkInBaggage} alt="checkIn" className="w-10 h-8" />
+                            <span className="text-sm text-textColor font-semibold">
+                              Check-In Hành lý:
+                            </span>
+                            <span className="ml-2 text-sm text-textColor">
                               {
                                 data.data.flightOffers[0].travelerPricings[0]
-                                  .fareDetailsBySegment[0].cabin
+                                  .fareDetailsBySegment[0].includedCheckedBags.weight
                               }
-                            </div>
-                          </div>
-
-                          <div className="relative mt-2 p-2 md:p-4 bg-[#f4f4f4]">
-                            <div className="flex items-center pb-4 md:pb-2 gap-4">
-                              <div className="h-[100px] md:h-[80px] flex flex-col justify-between">
-                                <span className="block text-base font-medium">
-                                  {getHourFromAPI(detail.departure.at)}
-                                </span>
-
-                                <span className="block text-base font-medium">
-                                  {getHourFromAPI(detail.arrival.at)}
-                                </span>
-                              </div>
-
-                              <div className="relative h-[80px] md:h-[60px] flex flex-col justify-between">
-                                <div className="border border-gray-500 bg-white w-3 h-3 rounded-full"></div>
-                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[2px] h-8 bg-gray-500"></div>
-                                <div className="border border-gray-500 bg-white w-3 h-3 rounded-full"></div>
-                              </div>
-
-                              <div className="h-[100px] md:h-[80px] flex flex-col justify-between">
-                                <div className="text-base font-medium">
-                                  {detail.departure.iataCode}
-                                  {" - "}
-                                  {getCountry(
-                                    countries,
-                                    data.dictionaries.locations[detail.departure.iataCode]
-                                      .countryCode
-                                  )}
-                                  , Nhà ga khởi hành: {detail.departure.terminal}
-                                </div>
-                                <span className="text-sm">
-                                  {getDurationFromAPI(detail.duration)}
-                                </span>
-                                <div className="text-base font-medium">
-                                  {detail.arrival.iataCode}
-                                  {" - "}
-                                  {getCountry(
-                                    countries,
-                                    data.dictionaries.locations[detail.arrival.iataCode].countryCode
-                                  )}
-                                  , Nhà ga khởi hành: {detail.arrival.terminal}
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="pt-2 border-t border-t-gray-300 flex items-center">
-                              <img src={checkInBaggage} alt="checkIn" className="w-10 h-8" />
-                              <span className="text-sm text-textColor font-semibold">
-                                Check-In Hành lý:
-                              </span>
-                              <span className="ml-2 text-sm text-textColor">
-                                {
-                                  data.data.flightOffers[0].travelerPricings[0]
-                                    .fareDetailsBySegment[0].includedCheckedBags.weight
-                                }
-                                {
-                                  data.data.flightOffers[0].travelerPricings[0]
-                                    .fareDetailsBySegment[0].includedCheckedBags.weightUnit
-                                }{" "}
-                                / Người lớn
-                              </span>
-                            </div>
+                              {
+                                data.data.flightOffers[0].travelerPricings[0]
+                                  .fareDetailsBySegment[0].includedCheckedBags.weightUnit
+                              }{" "}
+                              / Người lớn
+                            </span>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  ))}
-                </div>
+                      </div>
+                    ))}
+                  </div>
+                ))}
 
                 <div className="my-4">
                   <h2 className="text-lg text-textColor font-semibold my-2">

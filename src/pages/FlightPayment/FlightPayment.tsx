@@ -17,7 +17,7 @@ export default function FlightPayment() {
     navigate(-1)
   }
 
-  const dataLS = localStorage.getItem("detailPayment") as string
+  const dataLS = localStorage.getItem("detailPaymentData") as string
   const data = JSON.parse(dataLS) as ResponseFlightOrder
 
   const priceAdult = usePriceTraveller(data, "ADULT")
@@ -56,7 +56,7 @@ export default function FlightPayment() {
       })
 
       window.location.href = response.data.url
-      localStorage.removeItem("detailPayment")
+      localStorage.removeItem("detailPaymentData")
       localStorage.removeItem("flightPriceData")
     } catch (error) {
       console.error("Error creating payment URL:", error)

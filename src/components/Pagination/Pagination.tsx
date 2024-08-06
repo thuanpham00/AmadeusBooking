@@ -40,14 +40,14 @@ export default function Pagination({
       <div className="flex items-center justify-center gap-4">
         <button
           onClick={() => handleChangePage(currentPage - 2)}
-          className="bg-gray-500 p-2 text-whiteColor hover:opacity-50 duration-200"
+          className="bg-gray-300 p-2 text-textColor hover:opacity-50 duration-200"
         >
           Trước
         </button>
         {listPage}
         <button
           onClick={() => handleChangePage(currentPage)}
-          className="bg-gray-500 p-2 text-whiteColor hover:opacity-50 duration-200"
+          className="bg-gray-300 p-2 text-textColor hover:opacity-50 duration-200"
         >
           Sau
         </button>

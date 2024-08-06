@@ -21,6 +21,7 @@ const FlightSearch = lazy(() => import("src/pages/FlightSearch"))
 const FlightOrder = lazy(() => import("src/pages/FlightOrder"))
 const FlightPayment = lazy(() => import("src/pages/FlightPayment"))
 const PaymentComplete = lazy(() => import("src/pages/Payment"))
+const Cart = lazy(() => import("src/pages/Cart"))
 
 function ProtectedRouter() {
   const { isAuthenticated } = useContext(AppContext)
@@ -61,6 +62,20 @@ export default function useRouterElement() {
     },
     {
       path: "",
+      element: <MainLayout2 />, // sử dụng chung // fix re-render
+      children: [
+        {
+          path: path.flightSearch, // trạm tìm chuyến bay
+          element: (
+            <Suspense>
+              <FlightSearch />
+            </Suspense>
+          )
+        }
+      ]
+    },
+    {
+      path: "",
       element: <ProtectedRouter />,
       children: [
         {
@@ -69,15 +84,7 @@ export default function useRouterElement() {
           element: <MainLayout2 />, // sử dụng chung // fix re-render
           children: [
             {
-              path: path.flightSearch,
-              element: (
-                <Suspense>
-                  <FlightSearch />
-                </Suspense>
-              )
-            },
-            {
-              path: path.flightOrder,
+              path: path.flightOrder, // tới trạm tạo đơn
               element: (
                 <Suspense>
                   <FlightOrder />
@@ -85,7 +92,7 @@ export default function useRouterElement() {
               )
             },
             {
-              path: path.flightPayment,
+              path: path.flightPayment, // tới trạm thanh toán
               element: (
                 <Suspense>
                   <FlightPayment />
@@ -93,10 +100,18 @@ export default function useRouterElement() {
               )
             },
             {
-              path: path.paymentComplete,
+              path: path.paymentComplete, // thanh toán thành công
               element: (
                 <Suspense>
                   <PaymentComplete />
+                </Suspense>
+              )
+            },
+            {
+              path: path.cart, // giỏ hàng
+              element: (
+                <Suspense>
+                  <Cart />
                 </Suspense>
               )
             }

@@ -671,7 +671,7 @@ export default function FlightSearch() {
                     <div className="col-span-12 lg:col-span-9">
                       <div className="flex items-center gap-2 lg:gap-0 mb-2">
                         <Sheet>
-                          <SheetTrigger>
+                          <SheetTrigger aria-label="filter">
                             <div className="md:block lg:hidden p-2 bg-blueColor rounded-xl">
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"

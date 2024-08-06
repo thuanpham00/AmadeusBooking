@@ -13,14 +13,14 @@ import {
   exchangePrice,
   getCountry,
   getCountryAirport,
-  getDate,
+  getDateFromAPI,
   getDurationFromAPI,
   getHourFromAPI
 } from "src/utils/utils"
 import Button from "src/components/Button"
 import { useMutation } from "@tanstack/react-query"
 import { flightApi } from "src/apis/flight.api"
-import { Fragment, useState } from "react"
+import { Fragment, useContext, useEffect, useState } from "react"
 import { airportCodes, countries } from "src/constant/flightSearch"
 import {
   AlertDialog,
@@ -36,6 +36,9 @@ import icon2 from "../../../../img/svg/mmtconnect_orange.avif"
 import Skeleton from "src/components/Skeleton"
 import { useNavigate } from "react-router-dom"
 import { path } from "src/constant/path"
+import { AppContext } from "src/context/useContext"
+import { toast } from "react-toastify"
+import { setCartToLS } from "src/utils/auth"
 
 interface Props {
   item: ResponseFlightItem
@@ -44,6 +47,7 @@ interface Props {
 
 export default function FlightItem({ item, list }: Props) {
   const navigate = useNavigate()
+  const { setListCart, listCart } = useContext(AppContext)
   const [showFlightDetail, setShowFlightDetail] = useState(false)
   const [showPriceDetail, setShowPriceDetail] = useState(false)
 
@@ -81,6 +85,18 @@ export default function FlightItem({ item, list }: Props) {
     localStorage.setItem("flightPriceData", JSON.stringify(flightPrice))
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
+
+  const handleAddToCart = () => {
+    toast.success("Thêm giỏ hàng thành công!!!")
+    setListCart((prev) => [...prev, flightPrice])
+  }
+
+  // nếu ds list cart có thay đổi thì hàm này chạy re-render lại
+  useEffect(() => {
+    if (listCart) {
+      setCartToLS(listCart)
+    }
+  }, [listCart])
 
   return (
     <Fragment>
@@ -274,7 +290,7 @@ export default function FlightItem({ item, list }: Props) {
                                   )}
                                 </div>
                                 <div className="w-1 h-1 bg-textColor rounded-full"></div>
-                                <div>{getDate(detailPrice.segments[0].departure.at)}</div>
+                                <div>{getDateFromAPI(detailPrice.segments[0].departure.at)}</div>
                                 <div className="w-1 h-1 bg-textColor rounded-full"></div>
                                 <div className="text-base font-medium">
                                   Khởi hành {getHourFromAPI(detailPrice.segments[0].departure.at)}
@@ -463,7 +479,7 @@ export default function FlightItem({ item, list }: Props) {
                       <AlertDialogFooter className="mt-4 py-2 px-6 border-t border-t-gray-300">
                         <div className="flex items-center justify-end gap-2">
                           <Button
-                            onClick={handleNavigatePage}
+                            onClick={handleAddToCart}
                             nameButton="Thêm vào giỏ hàng"
                             className="capitalize py-2 px-4 text-blueColor w-full border border-gray-300 text-sm rounded-full bg-transparent hover:bg-gray-100 hover:border-blueColor duration-200"
                           />
@@ -518,7 +534,7 @@ export default function FlightItem({ item, list }: Props) {
                           {getHourFromAPI(seg.departure.at)}
                         </div>
                         <div className="text-xs lg:text-sm text-textColor font-medium">
-                          {getDate(seg.departure.at)}
+                          {getDateFromAPI(seg.departure.at)}
                         </div>
                         <div className="text-xs lg:text-sm text-textColor font-normal">
                           Nhà ga khởi hành {seg.departure.terminal}
@@ -542,7 +558,7 @@ export default function FlightItem({ item, list }: Props) {
                           {getHourFromAPI(seg.arrival.at)}
                         </div>
                         <div className="text-xs lg:text-sm text-textColor font-medium">
-                          {getDate(seg.arrival.at)}
+                          {getDateFromAPI(seg.arrival.at)}
                         </div>
                         <div className="text-xs lg:text-sm text-textColor font-normal">
                           Nhà ga khởi hành {seg.arrival.terminal}

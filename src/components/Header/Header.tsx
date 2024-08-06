@@ -6,7 +6,7 @@ import coMy from "../../img/lauguage/coMy.webp"
 import { useContext } from "react"
 import { AppContext } from "src/context/useContext"
 import Popover from "../Popover"
-import { getNameToEmail } from "src/utils/utils"
+import { getNameFromEmail } from "src/utils/utils"
 import { clearLS } from "src/utils/auth"
 import {
   NavigationMenu,
@@ -111,13 +111,13 @@ export default function Header() {
             <Popover
               className="sticky top-0 left-0 z-30"
               renderPopover={
-                <div className="shadow-lg rounded flex flex-col">
+                <div className="shadow-lg flex flex-col">
                   <button className="text-sm flex items-center gap-2 text-left min-w-[120px] p-3 bg-[#edf2f4] text-textColor hover:bg-gray-300 duration-200 border border-gray-300">
                     <img src={coVN} alt="Cờ Việt Nam" className="h-6 w-6 object-contain" />
                     Vietnamese
                   </button>
 
-                  <button className="text-sm flex items-center gap-2 text-left min-w-[120px] p-3 bg-[#edf2f4] text-textColor hover:bg-gray-300 duration-200">
+                  <button className="text-sm flex items-center gap-2 text-left min-w-[120px] p-3 bg-[#edf2f4] text-textColor hover:bg-gray-300 duration-200 border border-gray-300 border-t-0">
                     <img src={coMy} alt="Cờ Mỹ" className="h-6 w-6 object-contain" />
                     English
                   </button>
@@ -130,7 +130,7 @@ export default function Header() {
               </div>
             </Popover>
 
-            <Link to="">
+            <Link to={path.cart}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -170,7 +170,7 @@ export default function Header() {
                     <SheetTitle className="mt-10">
                       {isAuthenticated && (
                         <div className="py-[2px] px-3 rounded-sm duration-200 hover:bg-[#ddd]/20 flex items-center gap-1 text-textColor font-medium text-base">
-                          Xin chào, {getNameToEmail(isProfile as string)}
+                          Xin chào, {getNameFromEmail(isProfile as string)}
                         </div>
                       )}
                       {!isAuthenticated && (
@@ -200,14 +200,14 @@ export default function Header() {
               <Popover
                 className="sticky top-0 left-0 z-30"
                 renderPopover={
-                  <div className="shadow-lg rounded flex flex-col border border-gray-300">
-                    <button className="text-sm text-left min-w-[120px] px-4 py-3 bg-[#edf2f4] text-textColor hover:bg-gray-300 duration-200 border-b border-gray-300">
+                  <div className="shadow-lg flex flex-col">
+                    <button className="text-sm text-left min-w-[120px] px-4 py-3 bg-[#edf2f4] text-textColor hover:bg-gray-300 duration-200 border border-gray-300">
                       Tài khoản của tôi
                     </button>
 
                     <button
                       onClick={handleLogOut}
-                      className="text-sm text-left min-w-[120px] px-4 py-3 bg-[#edf2f4] text-textColor hover:bg-gray-300 duration-200 flex items-center gap-2"
+                      className="text-sm text-left min-w-[120px] px-4 py-3 bg-[#edf2f4] text-textColor hover:bg-gray-300 duration-200 flex items-center gap-2 border border-gray-300 border-t-0"
                     >
                       Đăng xuất
                       <svg
@@ -244,7 +244,7 @@ export default function Header() {
                     />
                   </svg>
 
-                  {getNameToEmail(isProfile as string)}
+                  {getNameFromEmail(isProfile as string)}
                 </div>
               </Popover>
             )}

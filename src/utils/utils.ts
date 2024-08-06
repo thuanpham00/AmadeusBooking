@@ -7,7 +7,7 @@ export function isAxiosError<T>(error: unknown): error is AxiosError<T> {
   return axios.isAxiosError<T>(error)
 }
 
-export const getNameToEmail = (email: string) => {
+export const getNameFromEmail = (email: string) => {
   if (email) {
     const result = email.split("@")
     return result[0]
@@ -30,6 +30,7 @@ export const convertToYYYYMMDD = (date: Date) => {
   return `${year}-${month}-${day}`
 }
 
+// 2024-07-01T14:20:00
 export const getHourFromAPI = (hours: string) => {
   if (hours) {
     const result = hours.split("T")
@@ -37,7 +38,14 @@ export const getHourFromAPI = (hours: string) => {
   }
   return null
 }
-// 2024-07-01T14:20:00
+
+export function getDateFromAPI(date: string) {
+  if (date) {
+    const res = date.split("T")[0]
+    return res
+  }
+  return null
+}
 
 export const getDurationFromAPI = (duration: string) => {
   if (duration) {
@@ -101,14 +109,6 @@ export const getCountryAirport = (code: string) => {
     if (res) {
       return res.country + " - " + res.code
     }
-  }
-  return null
-}
-
-export function getDate(date: string) {
-  if (date) {
-    const res = date.split("T")[0]
-    return res
   }
   return null
 }

@@ -141,8 +141,11 @@ export default function AsideFilterFlight({ queryConfig }: Props) {
             checked={findSelect("VN")}
             onChange={handleSelectAirlines}
           />
-          <img src={logoAirLine_1} alt="logo-1" className="w-6 h-6 object-contain" />
-          <label htmlFor="nonStop" className="text-base text-textColor font-normal">
+          <label
+            htmlFor="VN"
+            className="text-base text-textColor font-normal flex items-center gap-2"
+          >
+            <img src={logoAirLine_1} alt="logo-1" className="w-6 h-6 object-contain" />
             Vietnam Airlines
           </label>
         </div>
@@ -155,8 +158,11 @@ export default function AsideFilterFlight({ queryConfig }: Props) {
             checked={findSelect("VJ")}
             onChange={handleSelectAirlines}
           />
-          <img src={logoAirLine_2} alt="logo-1" className="w-5 h-5 object-contain" />
-          <label htmlFor="nonStop" className="ml-1 text-base text-textColor font-normal">
+          <label
+            htmlFor="VJ"
+            className="text-base text-textColor font-normal flex items-center gap-2"
+          >
+            <img src={logoAirLine_2} alt="logo-1" className="w-5 h-5 object-contain" />
             VietJet Air
           </label>
         </div>
@@ -169,8 +175,11 @@ export default function AsideFilterFlight({ queryConfig }: Props) {
             checked={findSelect("NH")}
             onChange={handleSelectAirlines}
           />
-          <img src={logoAirLine_3} alt="logo-1" className="w-5 h-5 object-contain" />
-          <label htmlFor="nonStop" className="ml-1 text-base text-textColor font-normal">
+          <label
+            htmlFor="NH"
+            className="text-base text-textColor font-normal flex items-center gap-2"
+          >
+            <img src={logoAirLine_3} alt="logo-1" className="w-5 h-5 object-contain" />
             All Nippon Airways
           </label>
         </div>
@@ -183,8 +192,11 @@ export default function AsideFilterFlight({ queryConfig }: Props) {
             checked={findSelect("CX")}
             onChange={handleSelectAirlines}
           />
-          <img src={logoAirLine_4} alt="logo-1" className="w-5 h-5 object-contain" />
-          <label htmlFor="nonStop" className="ml-1 text-base text-textColor font-normal">
+          <label
+            htmlFor="CX"
+            className="text-base text-textColor font-normal flex items-center gap-2"
+          >
+            <img src={logoAirLine_4} alt="logo-1" className="w-5 h-5 object-contain" />
             Cathay Pacific
           </label>
         </div>
@@ -197,8 +209,11 @@ export default function AsideFilterFlight({ queryConfig }: Props) {
             checked={findSelect("CZ")}
             onChange={handleSelectAirlines}
           />
-          <img src={logoAirLine_5} alt="logo-1" className="w-5 h-5 object-contain" />
-          <label htmlFor="nonStop" className="ml-1 text-base text-textColor font-normal">
+          <label
+            htmlFor="CZ"
+            className="text-base text-textColor font-normal flex items-center gap-2"
+          >
+            <img src={logoAirLine_5} alt="logo-1" className="w-5 h-5 object-contain" />
             China southern airlines
           </label>
         </div>
@@ -211,8 +226,11 @@ export default function AsideFilterFlight({ queryConfig }: Props) {
             checked={findSelect("SQ")}
             onChange={handleSelectAirlines}
           />
-          <img src={logoAirLine_6} alt="logo-1" className="w-5 h-5 object-contain" />
-          <label htmlFor="nonStop" className="ml-1 text-base text-textColor font-normal">
+          <label
+            htmlFor="SQ"
+            className="text-base text-textColor font-normal flex items-center gap-2"
+          >
+            <img src={logoAirLine_6} alt="logo-1" className="w-5 h-5 object-contain" />
             Singapore Airlines
           </label>
         </div>
