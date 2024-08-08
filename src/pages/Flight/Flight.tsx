@@ -17,8 +17,8 @@ import { Controller, useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import schema, { schemaType } from "src/utils/rules"
 import { airportCodes, bannerAirLineList, travelClassList } from "src/constant/flightSearch"
-import { Fragment, useContext, useEffect, useMemo, useRef, useState } from "react"
-import { convertToYYYYMMDD, getCodeAirport, getNameFromEmail } from "src/utils/utils"
+import { Fragment, useContext, useEffect, useRef, useState } from "react"
+import { convertToYYYYMMDD, getNameFromEmail } from "src/utils/utils"
 import { AirportCodeList } from "src/types/flight.type"
 import InputSearch from "src/components/InputSearch"
 import SelectDate from "src/components/SelectDate"
@@ -35,6 +35,7 @@ import { path } from "src/constant/path"
 import useQueryConfig from "src/hooks/useQueryConfig"
 import Skeleton from "src/components/Skeleton"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "src/components/ui/sheet"
+import useFormHandler from "src/hooks/useFormHandler"
 
 export type FormData = Pick<
   schemaType,
@@ -71,7 +72,9 @@ const fetchDataAirport = () => Promise.resolve(airportCodes) // khởi tạo 1 p
 // component chỉ re-render khi props hoặc state thay đổi
 
 export default function Flight() {
-  const { isAuthenticated, isProfile, setIsAuthenticated, setIsProfile } = useContext(AppContext)
+  const { isAuthenticated, setIsAuthenticated, isProfile, setIsProfile, listCart } =
+    useContext(AppContext)
+
   // xử lý loading
   const [loading, setLoading] = useState(true)
   useEffect(() => {
@@ -146,33 +149,22 @@ export default function Flight() {
 
   //`useCallback()`: khi cta không muốn function của cta được khởi tạo lại mỗi lần component chúng ta re-render - nếu có thay đổi nó mới chạy lại - re-render
   //`useMemo()`: tương tự, khi chúng ta muốn một biến không bị làm mới lại mỗi lần component re-render. - nếu có thay đổi nó mới chạy lại - re-render
-  const filterAirportCodeList_1 = useMemo(
-    () =>
-      airportCodeList.filter((item) =>
-        item.country.toLowerCase().includes(searchText.toLowerCase())
-      ),
-    [searchText, airportCodeList]
+  // nâng cao
+  const { filterList: filterAirportCodeList_1, handleItemClick } = useFormHandler(
+    airportCodeList,
+    searchText,
+    setValue,
+    setSearchText,
+    setShowListAirport
   )
 
-  const filterAirportCodeList_2 = useMemo(
-    () =>
-      airportCodeList.filter((item) =>
-        item.country.toLowerCase().includes(searchText2.toLowerCase())
-      ),
-    [searchText2, airportCodeList]
-  ) // lọc các item dựa vào searchText (input)
-  // includes: hàm check bao gồm
-
-  const handleItemClick = (inputName: InputAirport, value: string) => {
-    setValue(inputName, getCodeAirport(value) as string) // đảm bảo giá trị của input được quản lý bởi react-hook-form // // cập nhật giá trị của một trường dữ liệu
-    if (inputName === "originLocationCode") {
-      setSearchText(value) // nếu dùng mỗi thằng này thì nó ko dc quản lý bởi useForm // luôn ""
-      setShowListAirport(false)
-    } else if (inputName === "destinationLocationCode") {
-      setSearchText2(value)
-      setShowListAirport2(false)
-    }
-  }
+  const { filterList: filterAirportCodeList_2, handleItemClick: handleItemClick2 } = useFormHandler(
+    airportCodeList,
+    searchText2,
+    setValue,
+    setSearchText2,
+    setShowListAirport2
+  )
 
   const handleChangeQuantity = (nameQuantity: InputController) => (value: number) => {
     setValue(nameQuantity, value) // đảm bảo giá trị của input được quản lý bởi react-hook-form // // cập nhật giá trị của một trường dữ liệu
@@ -259,7 +251,7 @@ export default function Flight() {
                 backgroundSize: "cover"
               }}
             >
-              <div className="bg-transparent py-4">
+              <div className="bg-transparent py-3">
                 <div className="container">
                   <div className="flex items-center justify-between cursor-pointer">
                     <div className="flex items-center gap-2">
@@ -268,7 +260,7 @@ export default function Flight() {
                       </div>
                       <div className="text-xl text-whiteColor font-semibold">Booking.</div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-4">
                       <Popover
                         className="sticky top-0 left-0 z-30"
                         renderPopover={
@@ -295,7 +287,10 @@ export default function Flight() {
                         </div>
                       </Popover>
 
-                      <Link to={path.cart}>
+                      <Link to={path.cart} className="relative">
+                        <span className="absolute left-4 -top-2 flex items-center justify-center w-4 h-4 rounded-full bg-red-500 text-white text-[10px]">
+                          {listCart.length}
+                        </span>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
@@ -534,7 +529,7 @@ export default function Flight() {
                           filterList={filterAirportCodeList_2}
                           value={searchText2}
                           showList={showListAirport2}
-                          handleItemClick={handleItemClick}
+                          handleItemClick={handleItemClick2}
                           inputName="destinationLocationCode"
                           handleChangeValue={(event) => setSearchText2(event.target.value)}
                           handleFocus={() => setShowListAirport2(true)}

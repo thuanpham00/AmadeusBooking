@@ -22,7 +22,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "src/
 export default function Header() {
   // xử lý header
   const { showHeader } = useScrollHeader(100)
-  const { isAuthenticated, isProfile, setIsAuthenticated, setIsProfile } = useContext(AppContext)
+  const { isAuthenticated, isProfile, setIsAuthenticated, setIsProfile, listCart } =
+    useContext(AppContext)
 
   const handleLogOut = () => {
     clearLS()
@@ -32,7 +33,7 @@ export default function Header() {
 
   return (
     <header
-      className={`sticky top-0 left-0 z-40 bg-whiteColor duration-100 transition-all ease-linear transform shadow-xl ${showHeader ? "h-auto opacity-100 py-4" : "h-0 opacity-0"}`}
+      className={`sticky top-0 left-0 z-40 bg-whiteColor duration-100 transition-all ease-linear  shadow-xl ${showHeader ? "h-auto opacity-100 py-3" : "h-0 opacity-0"}`}
     >
       <div className="container">
         <div className="flex items-center justify-between cursor-pointer">
@@ -43,6 +44,7 @@ export default function Header() {
               </div>
               <div className="text-xl text-textColor font-semibold">Booking.</div>
             </Link>
+
             <nav className="ml-8 hidden md:flex items-center">
               <NavigationMenu>
                 <NavigationMenuList>
@@ -107,7 +109,7 @@ export default function Header() {
             </nav>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             <Popover
               className="sticky top-0 left-0 z-30"
               renderPopover={
@@ -130,7 +132,10 @@ export default function Header() {
               </div>
             </Popover>
 
-            <Link to={path.cart}>
+            <Link to={path.cart} className="relative">
+              <span className="absolute left-4 -top-2 flex items-center justify-center w-4 h-4 rounded-full bg-red-500 text-white text-[10px]">
+                {listCart.length}
+              </span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -255,13 +260,13 @@ export default function Header() {
                   to={path.register}
                   className="py-2 px-3 border-2 border-blueColor duration-200 hover:bg-[#ddd]/80 rounded-sm text-sm"
                 >
-                  Register
+                  Đăng ký
                 </Link>
                 <Link
                   to={path.login}
                   className="py-2 px-3 border-2 border-blueColor bg-blueColor text-whiteColor duration-200 hover:bg-blueColor/80 hover:border-blueColor/80 rounded-sm text-sm"
                 >
-                  Login
+                  Đăng nhập
                 </Link>
               </div>
             )}

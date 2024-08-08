@@ -36,6 +36,8 @@ import CodeNumberList from "./Components/CodeNumberList"
 import useScrollHeader from "src/hooks/useScrollHeader"
 import { path } from "src/constant/path"
 import usePriceTraveller from "src/hooks/usePriceTraveller"
+import useFormHandler from "src/hooks/useFormHandler"
+import useValidateInput from "src/hooks/useValidateInput"
 
 export type FormData = Pick<
   schemaType,
@@ -59,25 +61,21 @@ export default function FlightOrder() {
   const [codeNumber, setCodeNumber] = useState("")
   const [showListCodeNumber, setShowListCodeNumber] = useState<boolean>(false)
 
+  const dataLS = localStorage.getItem("flightPriceData") as string
+  const data = JSON.parse(dataLS) as ResponseFlightPrice
+
   useEffect(() => {
     FetchDataListNational().then((res) => {
       setCodeNumberList(res)
     })
   }, [])
 
-  const filterCodeNumber = useMemo(
-    () =>
-      codeNumberList.filter((item) => item.name.toLowerCase().includes(codeNumber.toLowerCase())),
-    [codeNumberList, codeNumber]
-  )
+  const { filterList } = useFormHandler(codeNumberList, codeNumber)
 
   // xử lý back page
   const handleBackPage = () => {
     navigate(-1)
   }
-
-  const dataLS = localStorage.getItem("flightPriceData") as string
-  const data = JSON.parse(dataLS) as ResponseFlightPrice
 
   const quantityOfTraveller = useMemo(() => {
     const count = { adult: 0, child: 0, infant: 0 }
@@ -158,12 +156,6 @@ export default function FlightOrder() {
     setShowListCodeNumber(false)
   }
 
-  const flightCreateOrderMutation = useMutation({
-    mutationFn: (body: FlightCreateOrder) => {
-      return flightApi.flightCreateOrder(body)
-    }
-  })
-
   const {
     handleSubmit,
     register,
@@ -171,6 +163,14 @@ export default function FlightOrder() {
     formState: { errors }
   } = useForm<FormData>({
     resolver: yupResolver(schemaFormData)
+  })
+
+  const { handleChangeValueForm } = useValidateInput(setValue)
+
+  const flightCreateOrderMutation = useMutation({
+    mutationFn: (body: FlightCreateOrder) => {
+      return flightApi.flightCreateOrder(body)
+    }
   })
 
   const onSubmit = handleSubmit((dataForm) => {
@@ -328,7 +328,7 @@ export default function FlightOrder() {
                 {data.data.flightOffers[0].itineraries.map((item, index) => (
                   <div
                     key={index}
-                    className="relative p-4 mb-4 bg-white last:mb-0 shadow-md rounded-lg border border-gray-300 shadow"
+                    className="relative p-4 mb-4 bg-white last:mb-0 shadow-md rounded-lg border border-gray-300"
                   >
                     <div className="flex items-center justify-between flex-wrap">
                       <div className="flex items-center gap-1">
@@ -799,6 +799,7 @@ export default function FlightOrder() {
                             name="userName2"
                             register={register}
                             messageError={errors.userName2?.message}
+                            onChange={handleChangeValueForm("userName2")}
                           />
                         </div>
                         <div className="col-span-6 md:col-span-3">
@@ -814,6 +815,7 @@ export default function FlightOrder() {
                             name="lastName2"
                             register={register}
                             messageError={errors.lastName2?.message}
+                            onChange={handleChangeValueForm("lastName2")}
                           />
                         </div>
                         <div className="col-span-6 md:col-span-3 flex">
@@ -835,7 +837,7 @@ export default function FlightOrder() {
                               error={errors.codeNumber?.message}
                             >
                               <CodeNumberList
-                                listAirport={filterCodeNumber}
+                                listAirport={filterList}
                                 handleItemClick={handleItemClick}
                                 inputName="codeNumber"
                               />
@@ -852,6 +854,7 @@ export default function FlightOrder() {
                               name="numberPhone"
                               register={register}
                               messageError={errors.numberPhone?.message}
+                              onChange={handleChangeValueForm("numberPhone")}
                             />
                           </div>
                         </div>

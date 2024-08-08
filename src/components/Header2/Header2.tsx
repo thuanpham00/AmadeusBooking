@@ -19,7 +19,8 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet"
 
 export default function Header2() {
-  const { isAuthenticated, isProfile, setIsAuthenticated, setIsProfile } = useContext(AppContext)
+  const { isAuthenticated, isProfile, setIsAuthenticated, setIsProfile, listCart } =
+    useContext(AppContext)
 
   const handleLogOut = () => {
     clearLS()
@@ -28,12 +29,12 @@ export default function Header2() {
   }
 
   return (
-    <header className="bg-whiteColor py-2">
+    <header className="bg-whiteColor py-3 shadow-md">
       <div className="container">
         <div className="flex items-center justify-between cursor-pointer">
           <div className="flex items-center">
             <Link to={path.home} className="flex items-center">
-              <div className="hidden md:block w-14 h-14">
+              <div className="hidden md:block w-10 h-10">
                 <img src={logo} alt="Logo" className="w-full h-full object-contain" />
               </div>
               <div className="text-xl text-textColor font-semibold">Booking.</div>
@@ -103,7 +104,7 @@ export default function Header2() {
             </nav>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             <Popover
               className="sticky top-0 left-0"
               renderPopover={
@@ -126,7 +127,10 @@ export default function Header2() {
               </div>
             </Popover>
 
-            <Link to={path.cart}>
+            <Link to={path.cart} className="relative">
+              <span className="absolute left-4 -top-2 flex items-center justify-center w-4 h-4 rounded-full bg-red-500 text-white text-[10px]">
+                {listCart.length}
+              </span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import Input from "src/components/Input"
 import { listNationality } from "src/constant/flightSearch"
@@ -9,6 +9,8 @@ import Button from "src/components/Button"
 import { toast } from "react-toastify"
 import { yupResolver } from "@hookform/resolvers/yup"
 import schema, { schemaType } from "src/utils/rules"
+import useFormHandler from "src/hooks/useFormHandler"
+import useValidateInput from "src/hooks/useValidateInput"
 
 const FetchDataListNational = () => Promise.resolve(listNationality)
 
@@ -73,13 +75,7 @@ export default function FormProfile({ addOnTraveller }: Props) {
     return () => document.removeEventListener("mousedown", clickOutHideListAirport)
   }, [])
 
-  const filterNationality = useMemo(
-    () =>
-      nationalList.filter((item) =>
-        item.name.toLowerCase().includes(nationalProfile.toLowerCase())
-      ),
-    [nationalList, nationalProfile]
-  )
+  const { filterList } = useFormHandler(nationalList, nationalProfile)
 
   const handleItemClick = (inputName: string, value: string) => {
     if (inputName === "national") {
@@ -88,6 +84,8 @@ export default function FormProfile({ addOnTraveller }: Props) {
       setShowListNationality(false)
     }
   }
+
+  const { handleChangeValueForm } = useValidateInput(setValue)
 
   const handleSubmitForm = handleSubmit((data) => {
     const infoTraveller: TravellerType = {
@@ -121,23 +119,6 @@ export default function FormProfile({ addOnTraveller }: Props) {
     reset()
     setNationalProfile("")
   }
-
-  const handleChangeValueForm =
-    (nameInput: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      const valueInput = event.target.value.toUpperCase()
-      if (nameInput === "userName" || nameInput === "lastName") {
-        setValue(nameInput, valueInput)
-      } else if (
-        nameInput === "monthBirth" ||
-        nameInput === "yearBirth" ||
-        nameInput === "monthBirth"
-      ) {
-        // Sử dụng regex để chỉ cho phép nhập số
-        // thay thế các kí tự không phải kí tự số bằng ""
-        const valueInput2 = valueInput.replace(/[^0-9]/g, "")
-        setValue(nameInput, valueInput2)
-      }
-    }
 
   return (
     <form onSubmit={handleSubmitForm} className="w-full">
@@ -251,7 +232,7 @@ export default function FormProfile({ addOnTraveller }: Props) {
             error={errors.national?.message}
           >
             <Nationality
-              listAirport={filterNationality}
+              listAirport={filterList}
               handleItemClick={handleItemClick}
               inputName="national"
             />

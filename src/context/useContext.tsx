@@ -23,7 +23,7 @@ const initialState: initialStateType = {
   listCart: getCartToLS(),
   setListCart: () => null
 }
-
+// state management
 export const AppContext = createContext<initialStateType>(initialState)
 
 export default function AppProvider({ children }: Props) {
